@@ -75,7 +75,7 @@ app.get('/codes', (req,res) => {
                 rows.forEach(row => {
                     response += '  {"code": ' + row.code + ', "type": "' + row.incident_type + '"},';
                 });
-                response = '\n]';
+                response += '\n]';
                 res.status(200).type('json').send(response);
             }
         }

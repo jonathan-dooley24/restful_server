@@ -61,6 +61,26 @@ app.get('/incidents', (req,res) => {
     });
 });
 
+app.get('/codes', (req,res) => {
+    db.all('SELECT * FROM Codes ORDER BY Codes.code DESC', (err, rows) => {
+        if(err){
+            res.status(404).send("Error: Unable to gather Codes data");
+        }
+        else {
+            if(rows.length ==0){
+                res.status(404).send('Error: No results for query');
+            }
+            else {
+                let response = '[\n';
+                rows.forEach(row => {
+                    response += '  {"code": ' + row.code + ', "type": "' + row.incident_type + '"},';
+                });
+                let response = '\n]';
+                res.status(200).type('json').send(response);
+            }
+        }
+    });
+});
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
 });

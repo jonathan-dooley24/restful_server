@@ -5,6 +5,7 @@ let path = require('path');
 // NPM modules
 let express = require('express');
 let sqlite3 = require('sqlite3');
+const { json } = require('express');
 //const { send } = require('process');
 
 let db_filename = path.join(__dirname, 'stpaul_crime.sqlite3');
@@ -27,6 +28,36 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
 
 
 // GET request for NEIGHBORHOODS
+app.get('/neighborhoods', (req, res) => {
+    
+    db.all('Select * FROM Neighborhoods', (err, rows) => {
+        if(err || rows.length === 0) {
+            res.status(404).send("Error")
+        } else {
+            let response = '[\n'
+            let count = 0;
+            let length = rows.length;
+            rows.every(rows => {
+                if(count === length -1) {
+                    response += '{';
+                    response += '"id": ' + rows.neighborhood_number + ', ';
+                    response += '"name": ' + '"' + rows.neighborhood_name + '"';
+                    response += '}\n'
+                    return false;
+                }
+                response += '{';
+                response += '"id": ' + rows.neighborhood_number + ', ';
+                response += '"name": ' + '"' + rows.neighborhood_name + '"';
+                response += '},\n'
+                count = count + 1;
+
+                return true;
+            });
+            response += ']';
+            res.status(200).type('json').send(response);
+        }
+    });
+});
 
 
 

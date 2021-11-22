@@ -24,8 +24,16 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
 });
 
 // GET request for CODES
-
-
+app.get('/codes/:code', (req,res) => {
+    db.all('SELECT * FROM Codes WHERE code=? ORDER BY Codes.code', [req.params.code], (err, rows) => {
+        if(err){
+            res.status(404).send("Error: Unable to gather Codes data");
+        }
+        else {
+            res.status(200).type('json').send(rows);
+        }
+    });
+});
 
 // GET request for NEIGHBORHOODS
 app.get('/neighborhoods', (req, res) => {
@@ -51,16 +59,6 @@ app.get('/incidents', (req,res) => {
     });
 });
 
-app.get('/codes/:code', (req,res) => {
-    db.all('SELECT * FROM Codes WHERE code=? ORDER BY Codes.code', [req.params.code], (err, rows) => {
-        if(err){
-            res.status(404).send("Error: Unable to gather Codes data");
-        }
-        else {
-            res.status(200).type('json').send(rows);
-        }
-    });
-});
 app.listen(port, () => {
     console.log('Now listening on port ' + port);
 });

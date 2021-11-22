@@ -24,15 +24,40 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
 });
 
 // GET request for CODES
-app.get('/codes/:code', (req,res) => {
-    db.all('SELECT * FROM Codes WHERE code=? ORDER BY Codes.code', [req.params.code], (err, rows) => {
-        if(err){
-            res.status(404).send("Error: Unable to gather Codes data");
+app.get('/codes', (req,res) => {
+    if(req.query.code){ //extra option for codes handled here
+        let codes = req.query.code.split(",");
+        let sql = "SELECT * FROM Codes WHERE code IN (";
+        let code_values = [];
+        for(let i = 0; i < codes.length; i++){
+            code_values.push(parseInt(codes[i]));
+            if(i == codes.length-1){
+                sql += "?";
+            }
+            else{
+                sql += "?, ";
+            }
         }
-        else {
-            res.status(200).type('json').send(rows);
-        }
-    });
+        sql += ") ORDER BY Codes.code";
+        db.all(sql, code_values, (err, rows) => {
+            if(err){
+                res.status(404).send("Error: Unable to gather Codes data");
+            }
+            else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    }
+    else{ //for no extra options for codes added, default route handled here
+        db.all("SELECT * FROM Codes ORDER BY Codes.code", (err, rows) => {
+            if(err){
+                res.status(500).send("Error: Unable to gather Codes data");
+            }
+            else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    }
 });
 
 // GET request for NEIGHBORHOODS

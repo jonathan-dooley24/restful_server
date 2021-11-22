@@ -32,83 +32,32 @@ app.get('/neighborhoods', (req, res) => {
     
     db.all('Select * FROM Neighborhoods ORDER BY Neighborhoods.neighborhood_number', (err, rows) => {
         if(err || rows.length === 0) {
-            res.status(404).send("Error")
+            res.status(500).send("Error")
         } else {
-            let response = '[\n'
-            let count = 0;
-            let length = rows.length;
-            rows.every(rows => {
-                if(count === length -1) {
-                    response += '{';
-                    response += '"id": ' + rows.neighborhood_number + ', ';
-                    response += '"name": ' + '"' + rows.neighborhood_name + '"';
-                    response += '}\n'
-                    return false;
-                }
-                response += '{';
-                response += '"id": ' + rows.neighborhood_number + ', ';
-                response += '"name": ' + '"' + rows.neighborhood_name + '"';
-                response += '},\n'
-                count = count + 1;
-
-                return true;
-            });
-            response += ']';
-            res.status(200).type('json').send(response);
+            res.status(200).type('json').send(rows);
         }
     });
 });
 
-
-
 // GET request for INCIDENTS
 app.get('/incidents', (req,res) => {
     db.all('SELECT * FROM Incidents ORDER BY Incidents.date_time DESC', (err, rows) => {
-        if(err){
-            res.status(404).send("Error: Unable to gather INCIDENT data");
+        if(err || rows.length === 0) {
+            res.status(500).send("Error")
         }
         else{
-            if(rows.length ==0){
-                res.status(404).send('Error: No results for query');
-            }
-            else{
-                let response = '[\n';
-                rows.forEach(row => {
-                    response += '   {\n';
-                    response += '       "case_number":"' + row.case_number + '",\n';
-                    response += '       "date":"' + row.date_time.slice(0, 9) + '",\n';
-                    response += '       "time":"' + row.date_time.slice(11, 23) + '",\n';
-                    response += '       "code":"' + row.code + '",\n';
-                    response += '       "incident":"' + row.incident + '",\n';
-                    response += '       "police_grid":"' + row.police_grid + '",\n';
-                    response += '       "neighborhood_number":"' + row.neighborhood_number + '",\n';
-                    response += '       "block":"' + row.block + '",\n';
-                    response += '   },\n'
-                });
-                response += ']';
-                res.status(200).type('json').send(response);
-            }
+            res.status(200).type('json').send(rows);
         }
     });
 });
 
 app.get('/codes', (req,res) => {
-    db.all('SELECT * FROM Codes ORDER BY Codes.code DESC', (err, rows) => {
+    db.all('SELECT * FROM Codes ORDER BY Codes.code', (err, rows) => {
         if(err){
             res.status(404).send("Error: Unable to gather Codes data");
         }
         else {
-            if(rows.length ==0){
-                res.status(404).send('Error: No results for query');
-            }
-            else {
-                let response = '[\n';
-                rows.forEach(row => {
-                    response += '  {"code": ' + row.code + ', "type": "' + row.incident_type + '"},';
-                });
-                response += '\n]';
-                res.status(200).type('json').send(response);
-            }
+            res.status(200).type('json').send(rows);
         }
     });
 });

@@ -30,7 +30,7 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
 // GET request for NEIGHBORHOODS
 app.get('/neighborhoods', (req, res) => {
     
-    db.all('Select * FROM Neighborhoods', (err, rows) => {
+    db.all('Select * FROM Neighborhoods ORDER BY Neighborhoods.neighborhood_number', (err, rows) => {
         if(err || rows.length === 0) {
             res.status(404).send("Error")
         } else {

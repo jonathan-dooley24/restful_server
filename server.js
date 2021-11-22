@@ -51,8 +51,8 @@ app.get('/incidents', (req,res) => {
     });
 });
 
-app.get('/codes', (req,res) => {
-    db.all('SELECT * FROM Codes ORDER BY Codes.code', (err, rows) => {
+app.get('/codes/:code', (req,res) => {
+    db.all('SELECT * FROM Codes WHERE code=? ORDER BY Codes.code', [req.params.code], (err, rows) => {
         if(err){
             res.status(404).send("Error: Unable to gather Codes data");
         }

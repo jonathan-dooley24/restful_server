@@ -62,14 +62,39 @@ app.get('/codes', (req,res) => {
 
 // GET request for NEIGHBORHOODS
 app.get('/neighborhoods', (req, res) => {
-    
-    db.all('Select * FROM Neighborhoods ORDER BY Neighborhoods.neighborhood_number', (err, rows) => {
-        if(err || rows.length === 0) {
-            res.status(500).send("Error")
-        } else {
-            res.status(200).type('json').send(rows);
+    console.log(req.query.id);
+    if(req.query.id){ //extra option for neighborhood id handled here
+        console.log("we in")
+        let ids = req.query.id.split(",");
+        let sql = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN (";
+        let id_values = [];
+        for(let i = 0; i < ids.length; i++){
+            id_values.push(parseInt(ids[i]));
+            if(i == ids.length-1){
+                sql += "?";
+            }
+            else{
+                sql += "?, ";
+            }
         }
-    });
+
+        sql += ") ORDER BY Neighborhoods.neighborhood_number";
+        db.all(sql, id_values, (err, rows) => {
+            if(err || rows.length === 0) {
+                res.status(500).send("Error: invalid neighborhood")
+            } else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    } else {
+        db.all('Select * FROM Neighborhoods Order By Neighborhoods.neighborhood_number', (err, rows) => {
+            if(err || rows.length === 0) {
+                res.status(500).send("Error")
+            } else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    }
 });
 
 // GET request for INCIDENTS

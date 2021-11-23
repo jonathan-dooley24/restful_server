@@ -62,9 +62,7 @@ app.get('/codes', (req,res) => {
 
 // GET request for NEIGHBORHOODS
 app.get('/neighborhoods', (req, res) => {
-    console.log(req.query.id);
     if(req.query.id){ //extra option for neighborhood id handled here
-        console.log("we in")
         let ids = req.query.id.split(",");
         let sql = "SELECT * FROM Neighborhoods WHERE neighborhood_number IN (";
         let id_values = [];

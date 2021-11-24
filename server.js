@@ -40,7 +40,7 @@ app.get('/codes', (req,res) => {
         }
         sql += ") ORDER BY Codes.code";
         db.all(sql, code_values, (err, rows) => {
-            if(err){
+            if(err || rows.length === 0){
                 res.status(404).send("Error: Unable to gather Codes data");
             }
             else {
@@ -50,7 +50,7 @@ app.get('/codes', (req,res) => {
     }
     else{ //for no extra options for codes added, default route handled here
         db.all("SELECT * FROM Codes ORDER BY Codes.code", (err, rows) => {
-            if(err){
+            if(err || rows.length === 0){
                 res.status(500).send("Error: Unable to gather Codes data");
             }
             else {
@@ -75,7 +75,6 @@ app.get('/neighborhoods', (req, res) => {
                 sql += "?, ";
             }
         }
-
         sql += ") ORDER BY Neighborhoods.neighborhood_number";
         db.all(sql, id_values, (err, rows) => {
             if(err || rows.length === 0) {
@@ -97,14 +96,104 @@ app.get('/neighborhoods', (req, res) => {
 
 // GET request for INCIDENTS
 app.get('/incidents', (req,res) => {
-    db.all('SELECT * FROM Incidents ORDER BY Incidents.date_time DESC', (err, rows) => {
-        if(err || rows.length === 0) {
-            res.status(500).send("Error")
+    let sql = "SELECT * FROM Incidents WHERE " ;
+    let options = []; 
+
+    if(req.query.start_date){ //extra option for start date
+        if(options.length > 0){//use options.length to know whether to add 'AND' to sql query
+            sql += " AND "
         }
-        else{
-            res.status(200).type('json').send(rows);
+        let start = req.query.start_date + "T00:00:00"; //looks like 2019-11-24T00:00:00
+        sql += "date_time>=?";
+        options.push(start);
+    }
+    if(req.query.end_date){ //extra option for end date
+        if(options.length > 0){
+            sql += " AND "
         }
-    });
+        let end = req.query.end_date + "T00:00:00";
+        sql += "date_time<=?";
+        options.push(end);
+    }
+    if(req.query.code){ //extra option for codes
+        if(options.length > 0){
+            sql += " AND "
+        }
+        let codes = req.query.code.split(",");
+        sql += "code IN (";
+        for(let i = 0; i < codes.length; i++){
+            options.push(parseInt(codes[i]));
+            if(i == codes.length-1){
+                sql += "?";
+            }
+            else{
+                sql += "?, ";
+            }
+        }
+        sql+= ")";
+    }
+    if(req.query.neighborhood){ //extra option for neighborhoods handled here
+        if(options.length > 0){
+            sql += " AND "
+        }
+        let hoods = req.query.neighborhood.split(",");
+        sql += "neighborhood_number IN (";
+        for(let i = 0; i < hoods.length; i++){
+            options.push(parseInt(hoods[i]));
+            if(i == hoods.length-1){
+                sql += "?";
+            }
+            else{
+                sql += "?, ";
+            }
+        }
+        sql+= ")";
+    }
+    if(req.query.grid){ //extra option for police grids handled here
+        if(options.length > 0){
+            sql += " AND "
+        }
+        let grids = req.query.grid.split(",");
+        sql += "police_grid IN (";
+        for(let i = 0; i < grids.length; i++){
+            options.push(parseInt(grids[i]));
+            if(i == grids.length-1){
+                sql += "?";
+            }
+            else{
+                sql += "?, ";
+            }
+        }
+        sql+= ")";
+    }
+    if(req.query.limit && req.query.limit != 0){ //extra option for limit handled here
+        sql += " LIMIT " + req.query.limit;
+    }
+    //add sorting/ordering
+    sql += " ORDER BY Incidents.date_time DESC"
+
+    //console.log(sql);
+    //console.log(options);
+    if(options.length > 0){
+        db.all(sql, options, (err, rows) => {
+            if(err || rows.length === 0) {
+                res.status(500).send("Error: invalid incident query")
+            } else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    }
+    else{ //no optional paramters included in GET
+        db.all("SELECT * FROM Incidents ORDER BY Incidents.date_time DESC", (err, rows) => {
+            if(err || rows.length === 0) {
+                res.status(500).send("Error: invalid incident query")
+            } else {
+                res.status(200).type('json').send(rows);
+            }
+        });
+    }
+    
+    
 });
 
 app.listen(port, () => {

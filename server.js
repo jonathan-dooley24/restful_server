@@ -207,6 +207,11 @@ app.get('/incidents', (req,res) => {
 app.put("/new-incident", (req, res) => {
     //console.log(req.body);
     sql = "INSERT INTO Incidents(case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES ("; //dont forget to close );
+    if(!req.body.case_number || !req.body.date || !req.body.time || !req.body.code || !req.body.incident || !req.body.police_grid || !req.body.neighborhood_number || !req.body.block){
+        //if anything necessary for creation/put is null
+        res.status(500).send("Error: Missing arguments. Double-check case_number, date, time, code, incident, police_grid, neighborhood_number, and block");
+    }
+    //if(req.body.case_number && req.body.case_number)
 });
 
 //Delete by code
@@ -240,9 +245,6 @@ app.delete('/remove-incident', (req,res) => {
         });       
     }
 });
-
-//PUT new incident into db
-//app.put
 
 app.listen(port, () => {
     console.log('Now listening on port ' + port);

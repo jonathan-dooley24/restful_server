@@ -96,7 +96,8 @@ app.get('/neighborhoods', (req, res) => {
 
 // GET request for INCIDENTS
 app.get('/incidents', (req,res) => {
-    let sql = "SELECT * FROM Incidents WHERE " ;
+    //let sql = "SELECT * FROM Incidents WHERE " ;
+    let sql = "SELECT case_number, date(date_time) AS date, time(date_time) AS time, code, incident, police_grid, neighborhood_number, block FROM Incidents WHERE ";
     let options = []; 
 
     if(req.query.start_date){ //extra option for start date

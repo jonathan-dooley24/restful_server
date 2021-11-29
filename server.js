@@ -8,10 +8,17 @@ let sqlite3 = require('sqlite3');
 const { json } = require('express');
 //const { send } = require('process');
 
+let cors = require('cors');
+// ...
+
+
 let db_filename = path.join(__dirname, 'stpaul_crime.sqlite3');
 
 let app = express();
 let port = 8000;
+
+app.use(cors());
+app.use(express.json());
 
 // Open usenergy.sqlite3 database
 let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
@@ -177,7 +184,7 @@ app.get('/incidents', (req,res) => {
     //console.log(options);
     if(options.length > 0){
         db.all(sql, options, (err, rows) => {
-            if(err || rows.length === 0) {
+            if(err) {
                 res.status(500).send("Error: invalid incident query")
             } else {
                 res.status(200).type('json').send(rows);
@@ -197,10 +204,16 @@ app.get('/incidents', (req,res) => {
     
 });
 
+app.put("/new-incident", (req, res) => {
+    //console.log(req.body);
+    sql = "INSERT INTO Incidents(case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES ("; //dont forget to close );
+});
+
 //Delete by code
 app.delete('/remove-incident', (req,res) => {
-    if(req.query.case_number){
-        let case_number = req.query.case_number;
+    console.log(req.body);
+    if(req.body.case_number){
+        let case_number = req.body.case_number;
         let sql = "SELECT * FROM Incidents WHERE case_number=" + case_number;
         db.all(sql, (err, rows) => {
             if(err || rows.length === 0){
@@ -224,10 +237,12 @@ app.delete('/remove-incident', (req,res) => {
                 });
                 
             }
-        });
-        
+        });       
     }
 });
+
+//PUT new incident into db
+//app.put
 
 app.listen(port, () => {
     console.log('Now listening on port ' + port);

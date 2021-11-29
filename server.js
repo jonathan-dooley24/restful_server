@@ -111,7 +111,7 @@ app.get('/incidents', (req,res) => {
         if(options.length > 0){
             sql += " AND "
         }
-        let end = req.query.end_date + "T00:00:00";
+        let end = req.query.end_date + "T23:59:59";
         sql += "date_time<=?";
         options.push(end);
     }
@@ -183,7 +183,7 @@ app.get('/incidents', (req,res) => {
             }
         });
     }
-    else{ //no optional paramters included in GET
+    else{ //case handling for no optional parameters included in GET
         db.all("SELECT * FROM Incidents ORDER BY Incidents.date_time DESC", (err, rows) => {
             if(err || rows.length === 0) {
                 res.status(500).send("Error: invalid incident query")

@@ -1,27 +1,22 @@
 // Built-in Node.js modules
 let fs = require('fs');
 let path = require('path');
-
 // NPM modules
 let express = require('express');
 let sqlite3 = require('sqlite3');
-const { json } = require('express');
-//const { send } = require('process');
-
 let cors = require('cors');
-// ...
 
+const { json } = require('express');
 
 let db_filename = path.join(__dirname, 'stpaul_crime.sqlite3');
-
 let app = express();
 let port = 8000;
 
 app.use(cors());
 app.use(express.json());
 
-// Open usenergy.sqlite3 database
-let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READONLY, (err) => {
+// Open database
+let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {       //READWRITE!
     if (err) {
         console.log('Error opening ' + db_filename);
     }
@@ -103,10 +98,8 @@ app.get('/neighborhoods', (req, res) => {
 
 // GET request for INCIDENTS
 app.get('/incidents', (req,res) => {
-    //let sql = "SELECT * FROM Incidents WHERE " ;
     let sql = "SELECT case_number, date(date_time) AS date, time(date_time) AS time, code, incident, police_grid, neighborhood_number, block FROM Incidents WHERE ";
-    let options = []; 
-
+    let options = [];
     if(req.query.start_date){ //extra option for start date
         if(options.length > 0){//use options.length to know whether to add 'AND' to sql query
             sql += " AND "
@@ -180,8 +173,7 @@ app.get('/incidents', (req,res) => {
     //add sorting/ordering
     sql += " ORDER BY Incidents.date_time DESC"
 
-    //console.log(sql);
-    //console.log(options);
+    //db query for case where some parameters included in GET
     if(options.length > 0){
         db.all(sql, options, (err, rows) => {
             if(err) {
@@ -200,18 +192,21 @@ app.get('/incidents', (req,res) => {
             }
         });
     }
-    
-    
 });
 
 app.put("/new-incident", (req, res) => {
-    //console.log(req.body);
-    sql = "INSERT INTO Incidents(case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES ("; //dont forget to close );
     if(!req.body.case_number || !req.body.date || !req.body.time || !req.body.code || !req.body.incident || !req.body.police_grid || !req.body.neighborhood_number || !req.body.block){
-        //if anything necessary for creation/put is null
         res.status(500).send("Error: Missing arguments. Double-check case_number, date, time, code, incident, police_grid, neighborhood_number, and block");
     }
-    //if(req.body.case_number && req.body.case_number)
+    else{
+        let sql = "INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        let values = [req.body.case_number, (req.body.date + "T" + req.body.time), parseInt(req.body.code), req.body.incident, parseInt(req.body.police_grid), parseInt(req.body.neighborhood_number), req.body.block];
+        db.run(sql, values, (err) => {
+            if(err){
+                res.status(500).send("Error: invalid insertion into Incidents table. Please ensure that case_number is unique.");
+            }
+        });
+    }
 });
 
 //Delete by code
@@ -240,9 +235,9 @@ app.delete('/remove-incident', (req,res) => {
                         });
                     }
                 });
-                
+
             }
-        });       
+        });
     }
 });
 

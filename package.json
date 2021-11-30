@@ -1,0 +1,29 @@
+{
+    "name": "dynamic-webserver",
+    "version": "0.0.0",
+    "description": "Dynamic Web Server using Node JS",
+    "author": {
+        "name": "Jonathan Dooley",
+        "email": "dool3142@stthomas.edu"
+    },
+    "contributors": [
+        {
+            "name": "Carter Leising",
+            "email": "leis9549@stthomas.edu"
+        },
+        {
+            "name": "Zak Nilsen",
+            "email": "zak.nilsen@stthomas.edu"
+        }
+    ],
+    "main": "server.js.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jonathan-dooley24/restful_server"
+    },
+    "dependencies": {
+        "chart.js": "^3.6.0",
+        "express": "^4.17.1",
+        "sqlite3": "^5.0.2"
+    }
+}

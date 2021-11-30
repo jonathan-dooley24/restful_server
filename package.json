@@ -16,7 +16,7 @@
             "email": "zak.nilsen@stthomas.edu"
         }
     ],
-    "main": "server.js.js",
+    "main": "server.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/jonathan-dooley24/restful_server"

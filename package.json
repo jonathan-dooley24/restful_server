@@ -1,7 +1,7 @@
 {
-    "name": "dynamic-webserver",
+    "name": "RESTful Server",
     "version": "0.0.0",
-    "description": "Dynamic Web Server using Node JS",
+    "description": "RESTful Webserver using Node.js",
     "author": {
         "name": "Jonathan Dooley",
         "email": "dool3142@stthomas.edu"
@@ -22,7 +22,7 @@
         "url": "https://github.com/jonathan-dooley24/restful_server"
     },
     "dependencies": {
-        "chart.js": "^3.6.0",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
         "sqlite3": "^5.0.2"
     }

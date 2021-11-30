@@ -211,16 +211,15 @@ app.put("/new-incident", (req, res) => {
 
 //Delete by code
 app.delete('/remove-incident', (req,res) => {
-    console.log(req.body);
     if(req.body.case_number){
         let case_number = req.body.case_number;
         let sql = "SELECT * FROM Incidents WHERE case_number=" + case_number;
         db.all(sql, (err, rows) => {
             if(err || rows.length === 0){
-                res.status(404).send("Error: Case Number " + case_number + " not avaible to delete");
+                res.status(500).send("Error: Case Number " + case_number + " not avaible to delete");
             }
             else {
-                db.delete("DELETE FROM Incidents WHERE case_number=" + case_number, (err, rows) => {
+                db.run("DELETE FROM Incidents WHERE case_number=" + case_number, (err, rows) => {
                     if(err){
                         res.status(500).send("Error: Case Number not avaible to delete");
                     }
@@ -230,7 +229,7 @@ app.delete('/remove-incident', (req,res) => {
                                 res.status(200).send("Successful: Case Number was deleted");
                             }
                             else {
-                                res.status(404).send("Error: Case Number " + case_number + " deleted");
+                                res.status(500).send("Error: Case Number " + case_number + " not deleted");
                             }
                         });
                     }

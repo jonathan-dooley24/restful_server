@@ -221,12 +221,12 @@ app.delete('/remove-incident', (req,res) => {
             else {
                 db.run("DELETE FROM Incidents WHERE case_number=" + case_number, (err, rows) => {
                     if(err){
-                        res.status(500).send("Error: Case Number not avaible to delete");
+                        res.status(500).send("Error: Case Number " + case_number + " not avaible to delete");
                     }
                     else {
                         db.all(sql, (err, rows) => {
                             if(rows.length === 0){
-                                res.status(200).send("Successful: Case Number was deleted");
+                                res.status(200).send("Successful: Case Number " + case_number + " was deleted");
                             }
                             else {
                                 res.status(500).send("Error: Case Number " + case_number + " not deleted");

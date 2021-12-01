@@ -23,7 +23,7 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {   
     else {
         console.log('Now connected to ' + db_filename);
     }
-});
+}); 
 
 // GET request for CODES
 app.get('/codes', (req,res) => {

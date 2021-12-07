@@ -14,6 +14,7 @@ let port = 8000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // Open database
 let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {       //READWRITE!

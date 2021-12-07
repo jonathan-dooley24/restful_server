@@ -23,9 +23,14 @@
     <!-- Main app -->
     <div id="app">
         <div id="leafletmap"></div>
+        
+        <label>Location: </label>
+        <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
+        <button id="lookup" type="button" @click="LocationSearch">Look Up</button>
     </div>
-    <label>Location: </label><input id="location" type="text" placeholder="enter location" style="width: 20rem;"/>
-    <button id="lookup" type="button">Look Up</button>
+    
+
+
 </body>
 </html>
  

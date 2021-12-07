@@ -1,5 +1,6 @@
 let app;
 let map;
+
 let neighborhood_markers = 
 [
     {location: [44.942068, -93.020521], marker: null},
@@ -27,6 +28,9 @@ function init() {
     app = new Vue({
         el: '#app',
         data: {
+            location_search: "",
+            location_results: [],
+
             map: {
                 center: {
                     lat: 44.955139,
@@ -39,7 +43,17 @@ function init() {
                     se: {lat: 44.883658, lng: -92.993787}
                 }
             }
+
         }
+        /*computed: {
+            input_placeholder: function() {
+
+                return '1';
+                if (this.spotify_type[0] === "a")
+                    return "Search for an " + this.spotify_type;
+                return "Search for a " + this.spotify_type;
+            }
+        }*/
     });
 
     map = L.map('leafletmap').setView([app.map.center.lat, app.map.center.lng], app.map.zoom);
@@ -52,8 +66,27 @@ function init() {
     
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
+    
+    L.marker([44.942068, -93.020521]).addTo(map);
+    L.marker([44.977413, -93.025156]).addTo(map);
+    L.marker([44.931244, -93.079578]).addTo(map);
+    L.marker([44.956192, -93.060189]).addTo(map);
+    L.marker([44.978883, -93.068163]).addTo(map);
+    L.marker([44.975766, -93.113887]).addTo(map);
+    L.marker([44.959639, -93.121271]).addTo(map);
+    L.marker([44.947700, -93.128505]).addTo(map);
+    L.marker([44.930276, -93.119911]).addTo(map);
+    L.marker([44.982752, -93.147910]).addTo(map);
+    L.marker([44.963631, -93.167548]).addTo(map);
+    L.marker([44.973971, -93.197965]).addTo(map);
+    L.marker([44.949043, -93.178261]).addTo(map);
+    L.marker([44.934848, -93.176736]).addTo(map);
+    L.marker([44.913106, -93.170779]).addTo(map);
+    L.marker([44.937705, -93.136997]).addTo(map);
+    L.marker([44.949203, -93.093739]).addTo(map);
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
+        console.log(result);
         // St. Paul GeoJSON
         $(result.features).each(function(key, value) {
             district_boundary.addData(value);
@@ -76,4 +109,8 @@ function getJSON(url) {
             }
         });
     });
+}
+
+function LocationSearch(event){
+    console.log(app.location_search);
 }

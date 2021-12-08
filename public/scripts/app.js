@@ -118,7 +118,7 @@ function locationSearch(event){
         else{
             //console.log(result);
             //console.log("lat " + result[0].lat + " result[0].lon " + lon);
-            app.data.
+            //app.data.
             map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});   //hard coded to zoom 15 instead of app.map.zoom     
         }   
     }).catch((error) => {

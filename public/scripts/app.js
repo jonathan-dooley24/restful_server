@@ -44,15 +44,9 @@ function init() {
                 }
             }
 
-        }
-        /*computed: {
-            input_placeholder: function() {
-
-                return '1';
-                if (this.spotify_type[0] === "a")
-                    return "Search for an " + this.spotify_type;
-                return "Search for a " + this.spotify_type;
-            }
+        }/*,
+        computed: {
+            input_placeholder: setPlaceholder()
         }*/
     });
 
@@ -63,9 +57,6 @@ function init() {
         maxZoom: 18
     }).addTo(map);
     map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-    
-    let district_boundary = new L.geoJson();
-    district_boundary.addTo(map);
     
     L.marker([44.942068, -93.020521]).addTo(map);
     L.marker([44.977413, -93.025156]).addTo(map);
@@ -84,6 +75,9 @@ function init() {
     L.marker([44.913106, -93.170779]).addTo(map);
     L.marker([44.937705, -93.136997]).addTo(map);
     L.marker([44.949203, -93.093739]).addTo(map);
+
+    let district_boundary = new L.geoJson();
+    district_boundary.addTo(map);
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         console.log(result);
@@ -111,6 +105,34 @@ function getJSON(url) {
     });
 }
 
-function LocationSearch(event){
-    console.log(app.location_search);
+function locationSearch(event){
+    console.log("app location_Search : " + app.location_search);
+
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_search +
+              '&format=json&limit=25&accept-language=en'
+    //console.log(url);
+    getJSON(url).then((result) => {
+        if(result.length == 0){ //if no results
+            console.log("Error: no results for this search");
+        }
+        else{
+            //console.log(result);
+            //console.log("lat " + result[0].lat + " result[0].lon " + lon);
+            app.data.
+            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});   //hard coded to zoom 15 instead of app.map.zoom     
+        }   
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
 }
+
+function setPlaceholder(){
+    let currentlatlong = document.getElementById("current");
+    currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
+}
+
+
+
+
+//test address
+//643 Virginia St, Saint Paul, MN

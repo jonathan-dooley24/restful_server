@@ -21,12 +21,14 @@
 </head>
 <body onload="init()">
     <!-- Main app -->
+    
     <div id="app">
-        <div id="leafletmap"></div>
-        
+        <h1 id = "current">Lat: 44.955139 Long: -93.102222</h1>
+        <div id="leafletmap" @click.stop="setPlaceholder"></div>
+
         <label>Location: </label>
         <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
-        <button id="lookup" type="button" @click="LocationSearch">Look Up</button>
+        <button id="lookup" type="button" @click="locationSearch">Look Up</button>
     </div>
     
 

@@ -119,7 +119,11 @@ function locationSearch(event){
             //console.log(result);
             //console.log("lat " + result[0].lat + " result[0].lon " + lon);
             //app.data.
-            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});   //hard coded to zoom 15 instead of app.map.zoom     
+            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
+            setTimeout(() => {
+               setPlaceholder(); 
+            }, 600);
+            
         }   
     }).catch((error) => {
         console.log('Error:', error);
@@ -131,7 +135,20 @@ function setPlaceholder(){
     currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
 }
 
-
+function getDataTable() {
+    let mapBounds = map.getBounds();
+    let northEast = mapBounds._northEast;
+    let southWest = mapBounds._southWest;
+    let onScreen = [];
+    let count = 1;
+    neighborhood_markers.forEach(neighborhood => {
+        if(neighborhood.location[0] <= northEast.lat && neighborhood.location[0] >= southWest.lat && neighborhood.location[1] <= northEast.lng && neighborhood.location[1] >= southWest.lng){
+            onScreen.push(count);
+        }
+        count++;
+    });
+    
+}
 
 
 //test address

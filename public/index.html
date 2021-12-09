@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>St. Paul Crime Map</title>
+    <link rel="stylesheet" href="css/foundation.css">
+    <script src="js/foundation.js"></script>
 
     <!-- jQuery -->
     <script type="application/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,16 +25,20 @@
     <!-- Main app -->
     
     <div id="app">
-        <h1 id = "current">Lat: 44.955139 Long: -93.102222</h1>
-        <div id="leafletmap" @click.stop="setPlaceholder"></div>
-
-        <label>Location: </label>
-        <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
-        <button id="lookup" type="button" @click="locationSearch">Look Up</button>
+        <div class="grid-x grid-padding-x">
+            <div class="cell large-3">Menu</div>
+            <h1 id = "current" class="cell large-9">Lat: 44.955139 Long: -93.102222</h1>
+        </div>
+        <div class="grid-x grid-padding-x">
+            <div class="cell large-3">
+                <label>Location: </label>
+                <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
+                <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
+            </div>
+            <div class="cell large-8" id="leafletmap" @click.stop="setPlaceholder"></div>
+            <div class="cell large-1"></div>
+        </div>
     </div>
-    
-
-
 </body>
 </html>
  

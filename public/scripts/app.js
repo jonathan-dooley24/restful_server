@@ -64,8 +64,6 @@ function init() {
     }).addTo(map);
     map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
     
-    let district_boundary = new L.geoJson();
-    district_boundary.addTo(map);
     
     L.marker([44.942068, -93.020521]).addTo(map);
     L.marker([44.977413, -93.025156]).addTo(map);
@@ -84,6 +82,9 @@ function init() {
     L.marker([44.913106, -93.170779]).addTo(map);
     L.marker([44.937705, -93.136997]).addTo(map);
     L.marker([44.949203, -93.093739]).addTo(map);
+
+    let district_boundary = new L.geoJson();
+    district_boundary.addTo(map);
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         console.log(result);

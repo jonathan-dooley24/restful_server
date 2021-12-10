@@ -133,9 +133,11 @@ function locationSearch(event){
 function setPlaceholder(){
     let currentlatlong = document.getElementById("current");
     currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
+    getDataTable();
 }
 
 function getDataTable() {
+    let app2;
     let mapBounds = map.getBounds();
     let northEast = mapBounds._northEast;
     let southWest = mapBounds._southWest;
@@ -147,7 +149,42 @@ function getDataTable() {
         }
         count++;
     });
-    
+    let url = "http://localhost:8000/neighborhoods?id=";
+    onScreen.forEach(number => {
+        url += number + ",";
+    });
+    let neighborhoodNames = [];
+    getJSON(url).then((result) => {
+        if(result.length == 0){ //if no results
+            console.log("Error: no results for this search");
+        }
+        else{
+            result.forEach(row => {
+                neighborhoodNames.push(row.neighborhood_name);
+            });
+        }   
+    });
+   /* app2 = new Vue({
+        el: "#list",
+        data: {
+            neighborhoods: neighborhoodNames
+        }
+    }) */
+    let newUrl = "http://localhost:8000/incidents?neighborhood=";
+    onScreen.forEach(number => {
+        newUrl += number + ",";
+    });
+    newUrl += "&limit=1000"
+    getJSON(newUrl).then((result) => {
+        if(result.length == 0){ //if no results
+            console.log("Error: no results for this search");
+        }
+        else{
+            result.forEach(row => {
+               
+            });
+        }   
+    });
 }
 
 

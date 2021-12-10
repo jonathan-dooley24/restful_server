@@ -36,7 +36,24 @@
                 <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
             </div>
             <div class="cell large-8" id="leafletmap" @click.stop="setPlaceholder"></div>
-            <div class="cell large-1"></div>
+            <div class="cell large-1">
+                Neighborhoods
+                <!--<ul id="list">
+                    <li v-for="Neighborhood in neighborhoods"> {{ Neighborhood }} </li>
+                </ul> -->
+            </div>
+        </div>
+        <div class="grid-x grid-padding-x">
+            <table>
+                <tr>
+                    <th>Case Num</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Incident</th>
+                    <th>Neighborhood</th>
+                    <th>Block</th>
+                </tr>
+            </table>
         </div>
     </div>
 </body>

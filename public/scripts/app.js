@@ -30,6 +30,7 @@ function init() {
         data: {
             location_search: "",
             location_results: [],
+            neighborhoods: [],
 
             map: {
                 center: {
@@ -49,6 +50,7 @@ function init() {
             input_placeholder: setPlaceholder()
         }*/
     });
+
 
     map = L.map('leafletmap').setView([app.map.center.lat, app.map.center.lng], app.map.zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -163,14 +165,10 @@ function getDataTable() {
             result.forEach(row => {
                 neighborhoodNames.push(row.neighborhood_name);
             });
+            app.neighborhoods = neighborhoodNames;
         }   
     });
-   /* app2 = new Vue({
-        el: "#list",
-        data: {
-            neighborhoods: neighborhoodNames
-        }
-    }) */
+    
     let newUrl = "http://localhost:8000/incidents?neighborhood=";
     onScreen.forEach(number => {
         newUrl += number + ",";

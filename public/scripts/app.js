@@ -58,6 +58,7 @@ function init() {
     }).addTo(map);
     map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
     
+    
     L.marker([44.942068, -93.020521]).addTo(map);
     L.marker([44.977413, -93.025156]).addTo(map);
     L.marker([44.931244, -93.079578]).addTo(map);

@@ -99,11 +99,14 @@ app.get('/neighborhoods', (req, res) => {
 
 // GET request for INCIDENTS
 app.get('/incidents', (req,res) => {
-    let sql = "SELECT case_number, date(date_time) AS date, time(date_time) AS time, code, incident, police_grid, neighborhood_number, block FROM Incidents WHERE ";
+    let sql = "SELECT case_number, date(date_time) AS date, time(date_time) AS time, code, incident, police_grid, neighborhood_number, block FROM Incidents";
     let options = [];
     if(req.query.start_date){ //extra option for start date
         if(options.length > 0){//use options.length to know whether to add 'AND' to sql query
-            sql += " AND "
+            sql += " AND ";
+        }
+        if(options.length == 0){
+            sql += " WHERE ";
         }
         let start = req.query.start_date + "T00:00:00"; //looks like 2019-11-24T00:00:00
         sql += "date_time>=?";
@@ -113,6 +116,9 @@ app.get('/incidents', (req,res) => {
         if(options.length > 0){
             sql += " AND "
         }
+        if(options.length == 0){
+            sql += " WHERE ";
+        }
         let end = req.query.end_date + "T23:59:59";
         sql += "date_time<=?";
         options.push(end);
@@ -120,6 +126,9 @@ app.get('/incidents', (req,res) => {
     if(req.query.code){ //extra option for codes
         if(options.length > 0){
             sql += " AND "
+        }
+        if(options.length == 0){
+            sql += " WHERE ";
         }
         let codes = req.query.code.split(",");
         sql += "code IN (";
@@ -138,6 +147,9 @@ app.get('/incidents', (req,res) => {
         if(options.length > 0){
             sql += " AND "
         }
+        if(options.length == 0){
+            sql += " WHERE ";
+        }
         let hoods = req.query.neighborhood.split(",");
         sql += "neighborhood_number IN (";
         for(let i = 0; i < hoods.length; i++){
@@ -154,6 +166,9 @@ app.get('/incidents', (req,res) => {
     if(req.query.grid){ //extra option for police grids handled here
         if(options.length > 0){
             sql += " AND "
+        }
+        if(options.length == 0){
+            sql += " WHERE ";
         }
         let grids = req.query.grid.split(",");
         sql += "police_grid IN (";
@@ -175,8 +190,10 @@ app.get('/incidents', (req,res) => {
         sql += " LIMIT " + req.query.limit;
     }
 
+    console.log(sql);
     //db query for case where some parameters included in GET
     if(options.length > 0){
+        console.log("custom")
         db.all(sql, options, (err, rows) => {
             if(err) {
                 res.status(500).send("Error: invalid incident query")
@@ -186,7 +203,11 @@ app.get('/incidents', (req,res) => {
         });
     }
     else{ //case handling for no optional parameters included in GET
-        db.all("SELECT * FROM Incidents ORDER BY Incidents.date_time DESC", (err, rows) => {
+        sql = "SELECT case_number, date(date_time) AS date, time(date_time) AS time, code, incident, police_grid, neighborhood_number, block FROM Incidents ORDER BY Incidents.date_time DESC";
+        if(req.query.limit && req.query.limit != 0){ //extra option for limit handled here
+            sql += " LIMIT " + req.query.limit;
+        }
+        db.all(sql, (err, rows) => {
             if(err || rows.length === 0) {
                 res.status(500).send("Error: invalid incident query")
             } else {

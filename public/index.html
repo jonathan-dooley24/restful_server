@@ -32,11 +32,11 @@
         <div class="grid-x grid-padding-x">
             <div class="cell large-3">
                 <label>Location: </label>
-                <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
+                <input id="location" type="text" v-model="location_search" style="width: 18rem;"/> <!--placeholder="input_placeholder"-->
                 <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
             </div>
-            <div class="cell large-8" id="leafletmap" @click.stop="setPlaceholder"></div>
-            <div class="cell large-1">
+            <div class="cell large-8" id="leafletmap"></div> <!-- @click.stop="setPlaceholder"-->
+            <div class="cell auto">
                 Neighborhoods
                 <ul>
                     <li v-for="Neighborhood in neighborhoods"> {{ Neighborhood }} </li>
@@ -52,6 +52,16 @@
                     <th>Incident</th>
                     <th>Neighborhood</th>
                     <th>Block</th>
+                </tr>
+                <tr v-for="row in tablerows">
+                    <td>{{row.case_number}}</td>
+                    <td>date</td>
+                    <td>time</td>
+                    <td>incident</td>
+                    <!--grab the neighborhood name using the num here-->
+
+                    <td>{{row.neighborhood_number}}</td>
+                    <td>{{row.block}}</td>
                 </tr>
             </table>
         </div>

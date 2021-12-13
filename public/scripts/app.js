@@ -30,8 +30,10 @@ function init() {
         data: {
             location_search: "",
             location_results: [],
-            neighborhoods: [],
-
+            neighborhoods: {
+                n_name: [],
+                n_number: []
+            },
             map: {
                 center: {
                     lat: 44.955139,
@@ -43,12 +45,11 @@ function init() {
                     nw: {lat: 45.008206, lng: -93.217977},
                     se: {lat: 44.883658, lng: -92.993787}
                 }
-            }
+            },
+            tablerows: [
 
-        }/*,
-        computed: {
-            input_placeholder: setPlaceholder()
-        }*/
+            ]
+        }
     });
 
 
@@ -59,6 +60,9 @@ function init() {
         maxZoom: 18
     }).addTo(map);
     map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
+
+    map.on("moveend", setPlaceholder);
+    map.on("zoomend", setPlaceholder);
     
     
     L.marker([44.942068, -93.020521]).addTo(map);
@@ -152,38 +156,57 @@ function getDataTable() {
         }
         count++;
     });
-    let url = "http://localhost:8000/neighborhoods?id=";
-    onScreen.forEach(number => {
-        url += number + ",";
-    });
-    let neighborhoodNames = [];
-    getJSON(url).then((result) => {
-        if(result.length == 0){ //if no results
-            console.log("Error: no results for this search");
-        }
-        else{
-            result.forEach(row => {
-                neighborhoodNames.push(row.neighborhood_name);
-            });
-            app.neighborhoods = neighborhoodNames;
-        }   
-    });
+    if(onScreen.length > 0){
+        let url = "http://localhost:8000/neighborhoods?id=";
+        onScreen.forEach(number => {
+            url += number + ",";
+        });
+        let neighborhoodNames = [];
+        getJSON(url).then((result) => {
+            if(result.length == 0){ //if no results
+                console.log("Error: no results for this search");
+            }
+            else{
+                result.forEach(row => {
+                    neighborhoodNames.push(row.neighborhood_name);
+                });
+                app.neighborhoods.n_name = neighborhoodNames;
+            }   
+        });
+
+        //neighborhoodNames causing issue.
+
+        
+        let newUrl = "http://localhost:8000/incidents?neighborhood=";
+        onScreen.forEach(number => {
+            newUrl += number + ",";
+        });
+        newUrl += "&limit=30"
+        getJSON(newUrl).then((result) => {
+            if(result.length == 0){ //if no results
+                console.log("Error: no results for this search");
+            }
+            else{
+                app.tablerows = [];
+                console.log(neighborhoodNames)
+                result.forEach(row => {
+                    console.log(row)
+                    let n_name = neighborhoodNames[row.neighborhood_number -1];
+                    let n_number = row.neighborhood_number;
+                    console.log(n_name + "  " + n_number);
+                    app.tablerows.push(row)
+                    //app.tablerows.neighborhood_number = neighborhoodNames[app.tablerows.neighborhood_number];
+                    //app.tablerows.push()
+                });
+
+                //console.log(app.tablerows);
+            }   
+        });
+    }
+    else{
+        app.neighborhoods = [];
+    }
     
-    let newUrl = "http://localhost:8000/incidents?neighborhood=";
-    onScreen.forEach(number => {
-        newUrl += number + ",";
-    });
-    newUrl += "&limit=1000"
-    getJSON(newUrl).then((result) => {
-        if(result.length == 0){ //if no results
-            console.log("Error: no results for this search");
-        }
-        else{
-            result.forEach(row => {
-               
-            });
-        }   
-    });
 }
 
 

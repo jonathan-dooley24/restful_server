@@ -24,7 +24,7 @@ let db = new sqlite3.Database(db_filename, sqlite3.OPEN_READWRITE, (err) => {   
     else {
         console.log('Now connected to ' + db_filename);
     }
-});
+}); 
 
 // GET request for CODES
 app.get('/codes', (req,res) => {
@@ -168,11 +168,12 @@ app.get('/incidents', (req,res) => {
         }
         sql+= ")";
     }
+    //add sorting/ordering
+    sql += " ORDER BY Incidents.date_time DESC"
+
     if(req.query.limit && req.query.limit != 0){ //extra option for limit handled here
         sql += " LIMIT " + req.query.limit;
     }
-    //add sorting/ordering
-    sql += " ORDER BY Incidents.date_time DESC"
 
     //db query for case where some parameters included in GET
     if(options.length > 0){

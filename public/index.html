@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>St. Paul Crime Map</title>
+    <link rel="stylesheet" href="css/foundation.css">
+    <script src="js/foundation.js"></script>
 
     <!-- jQuery -->
     <script type="application/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -21,11 +23,39 @@
 </head>
 <body onload="init()">
     <!-- Main app -->
+    
     <div id="app">
-        <div id="leafletmap"></div>
+        <div class="grid-x grid-padding-x">
+            <div class="cell large-3">Menu</div>
+            <h1 id = "current" class="cell large-9">Lat: 44.955139 Long: -93.102222</h1>
+        </div>
+        <div class="grid-x grid-padding-x">
+            <div class="cell large-3">
+                <label>Location: </label>
+                <input id="location" type="text" v-model="location_search" style="width: 20rem;"/> <!--placeholder="input_placeholder"-->
+                <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
+            </div>
+            <div class="cell large-8" id="leafletmap" @click.stop="setPlaceholder"></div>
+            <div class="cell large-1">
+                Neighborhoods
+                <ul>
+                    <li v-for="Neighborhood in neighborhoods"> {{ Neighborhood }} </li>
+                </ul>
+            </div>
+        </div>
+        <div class="grid-x grid-padding-x">
+            <table>
+                <tr>
+                    <th>Case Num</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Incident</th>
+                    <th>Neighborhood</th>
+                    <th>Block</th>
+                </tr>
+            </table>
+        </div>
     </div>
-    <label>Location: </label><input id="location" type="text" placeholder="enter location" style="width: 20rem;"/>
-    <button id="lookup" type="button">Look Up</button>
 </body>
 </html>
  

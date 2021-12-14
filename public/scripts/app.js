@@ -83,26 +83,54 @@ function init() {
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
     
-    L.marker([44.942068, -93.020521]).addTo(map);
-    L.marker([44.977413, -93.025156]).addTo(map);
-    L.marker([44.931244, -93.079578]).addTo(map);
-    L.marker([44.956192, -93.060189]).addTo(map);
-    L.marker([44.978883, -93.068163]).addTo(map);
-    L.marker([44.975766, -93.113887]).addTo(map);
-    L.marker([44.959639, -93.121271]).addTo(map);
-    L.marker([44.947700, -93.128505]).addTo(map);
-    L.marker([44.930276, -93.119911]).addTo(map);
-    L.marker([44.982752, -93.147910]).addTo(map);
-    L.marker([44.963631, -93.167548]).addTo(map);
-    L.marker([44.973971, -93.197965]).addTo(map);
-    L.marker([44.949043, -93.178261]).addTo(map);
-    L.marker([44.934848, -93.176736]).addTo(map);
-    L.marker([44.913106, -93.170779]).addTo(map);
-    L.marker([44.937705, -93.136997]).addTo(map);
-    L.marker([44.949203, -93.093739]).addTo(map);
+    let markerArray = [];
+
+    var marker1 = L.marker([44.942068, -93.020521]).addTo(map);
+    var marker2 = L.marker([44.977413, -93.025156]).addTo(map);
+    var marker3 = L.marker([44.931244, -93.079578]).addTo(map);
+    var marker4 = L.marker([44.956192, -93.060189]).addTo(map);
+    var marker5 = L.marker([44.978883, -93.068163]).addTo(map);
+    var marker6 = L.marker([44.975766, -93.113887]).addTo(map);
+    var marker7 = L.marker([44.959639, -93.121271]).addTo(map);
+    var marker8 = L.marker([44.947700, -93.128505]).addTo(map);
+    var marker9 = L.marker([44.930276, -93.119911]).addTo(map);
+    var marker10 = L.marker([44.982752, -93.147910]).addTo(map);
+    var marker11 = L.marker([44.963631, -93.167548]).addTo(map);
+    var marker12 = L.marker([44.973971, -93.197965]).addTo(map);
+    var marker13 = L.marker([44.949043, -93.178261]).addTo(map);
+    var marker14 = L.marker([44.934848, -93.176736]).addTo(map);
+    var marker15 = L.marker([44.913106, -93.170779]).addTo(map);
+    var marker16 = L.marker([44.937705, -93.136997]).addTo(map);
+    var marker17 = L.marker([44.949203, -93.093739]).addTo(map);
+
+    markerArray.push(marker1);
+    markerArray.push(marker2);
+    markerArray.push(marker3);
+    markerArray.push(marker4);
+    markerArray.push(marker5);
+    markerArray.push(marker6);
+    markerArray.push(marker7);
+    markerArray.push(marker8);
+    markerArray.push(marker9);
+    markerArray.push(marker10);
+    markerArray.push(marker11);
+    markerArray.push(marker12);
+    markerArray.push(marker13);
+    markerArray.push(marker14);
+    markerArray.push(marker15);
+    markerArray.push(marker16);
+    markerArray.push(marker17);
+
 
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
+
+
+    for(var i = 0; i < markerArray.length; i++) {
+        markerArray[i].on("mouseover", function() {
+            console.log("hello");
+        });
+    }
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         console.log(result);
@@ -199,7 +227,7 @@ function getDataTable() {
             else{
                 app.tablerows = [];
                 result.forEach(row => {
-                    console.log(row)
+                    //console.log(row)
                     let name = neighborhood_names[row.neighborhood_number-1]['name'];
                     row.neighborhood_number = name;
                     app.tablerows.push(row);               

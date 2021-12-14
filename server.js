@@ -190,7 +190,7 @@ app.get('/incidents', (req,res) => {
         sql += " LIMIT " + req.query.limit;
     }
 
-    console.log(sql);
+    //console.log(sql);
     //db query for case where some parameters included in GET
     if(options.length > 0){
         console.log("custom")

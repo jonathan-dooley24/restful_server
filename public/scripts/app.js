@@ -79,9 +79,9 @@ function init() {
     }).addTo(map);
     map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
 
+    //event 'listeners' for map zooms and pans
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
-    
     
     L.marker([44.942068, -93.020521]).addTo(map);
     L.marker([44.977413, -93.025156]).addTo(map);
@@ -141,9 +141,6 @@ function locationSearch(event){
             console.log("Error: no results for this search");
         }
         else{
-            //console.log(result);
-            //console.log("lat " + result[0].lat + " result[0].lon " + lon);
-            //app.data.
             map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
             setTimeout(() => {
                setPlaceholder(); 
@@ -180,7 +177,7 @@ function getDataTable() {
         });
         let neighborhoodNames = [];
         getJSON(url).then((result) => {
-            if(result.length == 0){ //if no results
+            if(result.length == 0){
                 console.log("Error: no results for this search");
             }
             else{
@@ -189,43 +186,28 @@ function getDataTable() {
                 });
                 app.neighborhoods = neighborhoodNames;
             }   
-        });
-
-        //neighborhoodNames causing issue.
-
-        
+        });  
         let newUrl = "http://localhost:8000/incidents?neighborhood=";
         onScreen.forEach(number => {
             newUrl += number + ",";
         });
         newUrl += "&limit=30"
         getJSON(newUrl).then((result) => {
-            if(result.length == 0){ //if no results
+            if(result.length == 0){
                 console.log("Error: no results for this search");
             }
             else{
                 app.tablerows = [];
-                //console.log(neighborhoodNames)
                 result.forEach(row => {
-                    //console.log(row)
+                    console.log(row)
                     let name = neighborhood_names[row.neighborhood_number-1]['name'];
                     row.neighborhood_number = name;
-                    app.tablerows.push(row);
-
-                    //console.log(app.tablerows);
-                    
+                    app.tablerows.push(row);               
                 });
-
-                //console.log(app.tablerows);
             }   
         });
     }
     else{
-        app.neighborhoods = [];
-    }
-    
+        app.neighborhoods = []; //clear array so that if no neighborhood pins present on screen, no data persists.
+    }   
 }
-
-
-//test address
-//643 Virginia St, Saint Paul, MN

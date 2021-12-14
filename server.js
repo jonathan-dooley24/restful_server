@@ -193,7 +193,6 @@ app.get('/incidents', (req,res) => {
     //console.log(sql);
     //db query for case where some parameters included in GET
     if(options.length > 0){
-        console.log("custom")
         db.all(sql, options, (err, rows) => {
             if(err) {
                 res.status(500).send("Error: invalid incident query")

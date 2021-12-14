@@ -202,6 +202,14 @@ function getDataTable() {
                     console.log(row)
                     let name = neighborhood_names[row.neighborhood_number-1]['name'];
                     row.neighborhood_number = name;
+                    let blockName = "";
+                    if(row.block.indexOf("X") >= 0)
+                    {
+                        blockName = addressTest(row.block);
+                        row.block = blockName;
+                    }
+                    
+                    //row.block = blockName;
                     app.tablerows.push(row);               
                 });
             }   
@@ -210,4 +218,24 @@ function getDataTable() {
     else{
         app.neighborhoods = []; //clear array so that if no neighborhood pins present on screen, no data persists.
     }   
+}
+
+function addressTest(blockName){
+    let index = 0;
+    blockName = blockName + "";
+    console.log(blockName);
+    let stringNumbers = "0123456789";
+    for (let index = 0, len = blockName.length; index < len; index++){
+        if(blockName.substring(index, index+1) == "X"){
+            if(index == 1 && !stringNumbers.includes(blockName.substring(index-1,index)) && blockName.substring(index+1, index+2) == "X"){
+                blockName = "0" + blockName.substring(index, blockName.length);
+            }
+            if(stringNumbers.includes(blockName.substring(index-1,index)) || stringNumbers.includes(blockName.substring(index+1,index+2)))
+            {
+                blockName = blockName.substring(0,index) + "0" + blockName.substring(index+1, blockName.length);
+            }
+        }
+    }
+    console.log(blockName);
+    return blockName;
 }

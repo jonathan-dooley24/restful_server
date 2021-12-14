@@ -83,8 +83,6 @@ function init() {
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
     
-    let markerArray = [];
-
     var marker1 = L.marker([44.942068, -93.020521]).addTo(map);
     var marker2 = L.marker([44.977413, -93.025156]).addTo(map);
     var marker3 = L.marker([44.931244, -93.079578]).addTo(map);
@@ -102,6 +100,8 @@ function init() {
     var marker15 = L.marker([44.913106, -93.170779]).addTo(map);
     var marker16 = L.marker([44.937705, -93.136997]).addTo(map);
     var marker17 = L.marker([44.949203, -93.093739]).addTo(map);
+
+    let markerArray = [];
 
     markerArray.push(marker1);
     markerArray.push(marker2);
@@ -121,16 +121,23 @@ function init() {
     markerArray.push(marker16);
     markerArray.push(marker17);
 
-
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
 
-
+    //Event listener for every marker
     for(var i = 0; i < markerArray.length; i++) {
-        markerArray[i].on("mouseover", function() {
-            console.log("hello");
+        var currentMarker = markerArray[i];
+        //if mouseover on marker, popup will appear
+        currentMarker.on("mouseover", function(e) {
+            var popup = L.popup()
+            .setLatLng(e.latlng)
+            .setContent("popup")
+            .openOn(map);
         });
+
+        //Maybe have a mouseout to close, if time?
     }
+    
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         console.log(result);

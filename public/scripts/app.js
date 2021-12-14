@@ -233,9 +233,11 @@ function getDataTable() {
             }
             else{
                 app.tablerows = [];
+                let popup_dict = {};
                 result.forEach(row => {
                     //console.log(row)
                     let name = neighborhood_names[row.neighborhood_number-1]['name'];
+                    popup_dict[name] = (popup_dict[name] || 0) + 1;
                     row.neighborhood_number = name;
                     let blockName = "";
                     if(row.block.indexOf("X") >= 0)
@@ -247,6 +249,7 @@ function getDataTable() {
                     //row.block = blockName;
                     app.tablerows.push(row);               
                 });
+                console.log(popup_dict);
             }   
         });
     }
@@ -258,7 +261,7 @@ function getDataTable() {
 function addressTest(blockName){
     let index = 0;
     blockName = blockName + "";
-    console.log(blockName);
+    //console.log(blockName);
     let stringNumbers = "0123456789";
     for (let index = 0, len = blockName.length; index < len; index++){
         if(blockName.substring(index, index+1) == "X"){
@@ -271,6 +274,6 @@ function addressTest(blockName){
             }
         }
     }
-    console.log(blockName);
+    //console.log(blockName);
     return blockName;
 }

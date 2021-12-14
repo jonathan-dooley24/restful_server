@@ -21,7 +21,27 @@ let neighborhood_markers =
     {location: [44.937705, -93.136997], marker: null},
     {location: [44.949203, -93.093739], marker: null}
 ];
- 
+
+let neighborhood_names = [
+    {name: "Conway/Battlecreek/Highwood"},
+    {name: "Greater East Side"},
+    {name: "West Side"},
+    {name: "Dayton's Bluff"},
+    {name: "Payne/Phalen"},
+    {name: "North End"},
+    {name: "Thomas/Dale(Frogtown)"},
+    {name: "Summit/University"},
+    {name: "West Seventh"},
+    {name: "Como"},
+    {name: "Hamline/Midway"},
+    {name: "St. Anthony"},
+    {name: "Union Park"},
+    {name: "Macalester-Groveland"},
+    {name: "Highland"},
+    {name: "Summit Hill"},
+    {name: "Capitol River"}
+];
+
 function init() {
     let crime_url = 'http://localhost:8000';
 
@@ -30,10 +50,8 @@ function init() {
         data: {
             location_search: "",
             location_results: [],
-            neighborhoods: {
-                n_name: [],
-                n_number: []
-            },
+            neighborhoods: [],
+
             map: {
                 center: {
                     lat: 44.955139,
@@ -144,7 +162,6 @@ function setPlaceholder(){
 }
 
 function getDataTable() {
-    let app2;
     let mapBounds = map.getBounds();
     let northEast = mapBounds._northEast;
     let southWest = mapBounds._southWest;
@@ -170,7 +187,7 @@ function getDataTable() {
                 result.forEach(row => {
                     neighborhoodNames.push(row.neighborhood_name);
                 });
-                app.neighborhoods.n_name = neighborhoodNames;
+                app.neighborhoods = neighborhoodNames;
             }   
         });
 
@@ -188,15 +205,15 @@ function getDataTable() {
             }
             else{
                 app.tablerows = [];
-                console.log(neighborhoodNames)
+                //console.log(neighborhoodNames)
                 result.forEach(row => {
-                    console.log(row)
-                    let n_name = neighborhoodNames[row.neighborhood_number -1];
-                    let n_number = row.neighborhood_number;
-                    console.log(n_name + "  " + n_number);
-                    app.tablerows.push(row)
-                    //app.tablerows.neighborhood_number = neighborhoodNames[app.tablerows.neighborhood_number];
-                    //app.tablerows.push()
+                    //console.log(row)
+                    let name = neighborhood_names[row.neighborhood_number-1]['name'];
+                    row.neighborhood_number = name;
+                    app.tablerows.push(row);
+
+                    //console.log(app.tablerows);
+                    
                 });
 
                 //console.log(app.tablerows);

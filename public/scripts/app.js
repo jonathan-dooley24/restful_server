@@ -3,7 +3,7 @@ let map;
 
 let neighborhood_markers = 
 [
-    {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood"},
+    {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood", count_crimes: 0},
     {location: [44.977413, -93.025156], marker: null, name: "Greater East Side"},
     {location: [44.931244, -93.079578], marker: null, name: "West Side"},
     {location: [44.956192, -93.060189], marker: null, name: "Dayton's Bluff"},
@@ -27,8 +27,9 @@ function init() {
     app = new Vue({
         el: '#app',
         data: {
-            location_search: "",
-            location_results: [],
+            location_address: "",
+            location_lat: "",
+            location_long: "",
             neighborhoods: [],
 
             map: {
@@ -61,12 +62,28 @@ function init() {
     
     //add markers for each neighborhood
     for(let i = 0; i < 17; i++){
+
         L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);        
     }
 
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
+    /*
+    //Event listener for every marker
+    for(var i = 0; i < markerArray.length; i++) {
+        var currentMarker = markerArray[i];
+        //if mouseover on marker, popup will appear
+        currentMarker.on("mouseover", function(e) {
+            var popup = L.popup()
+            .setLatLng(e.latlng)
+            .setContent("popup")
+            .openOn(map);
+        });
 
+        //Maybe have a mouseout to close, if time?
+    }
+    
+    */
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         //console.log(result);
         // St. Paul GeoJSON
@@ -93,9 +110,30 @@ function getJSON(url) {
     });
 }
 
-function locationSearch(event){
+function locationAddressSearch(event){
     //console.log("app location_Search : " + app.location_search);
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_search +
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_address +
+              '&format=json&limit=25&accept-language=en'
+
+    getJSON(url).then((result) => {
+        if(result.length == 0){ //if no results
+            console.log("Error: no results for this search");
+        }
+        else{
+            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
+            setTimeout(() => {
+               setPlaceholder(); 
+            }, 600); 
+        }   
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
+}
+
+function locationLatLongSearch(event){
+    //console.log("app location_Search : " + app.location_search);
+    let coords = app.location_lat + "," + app.location_long;
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + coords +
               '&format=json&limit=25&accept-language=en'
 
     getJSON(url).then((result) => {
@@ -114,8 +152,14 @@ function locationSearch(event){
 }
 
 function setPlaceholder(){
-    let currentlatlong = document.getElementById("current");
-    currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
+    //let currentlatlong = document.getElementById("current");
+    //currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
+
+    document.getElementById("lat").placeholder = map.getCenter().lat.toFixed(6);
+    document.getElementById("long").placeholder = map.getCenter().lng.toFixed(6);
+    // currentlat = map.getCenter().lat.toFixed(6);
+    // currentlong = map.getCenter().lng.toFixed(6);
+
     getDataTable();
 }
 
@@ -159,17 +203,47 @@ function getDataTable() {
             }
             else{
                 app.tablerows = [];
+                let popup_dict = {};
                 result.forEach(row => {
                     //console.log("row: " + row);
                     let name = neighborhood_markers[row.neighborhood_number-1].name;
                     //console.log("name: " + name);
                     row.neighborhood_number = name; //unorthodox but I like it
+                    popup_dict[name] = (popup_dict[name] || 0) + 1;
+                    let blockName = "";
+                    if(row.block.indexOf("X") >= 0)
+                    {
+                        blockName = addressTest(row.block);
+                        row.block = blockName;
+                    }
+
                     app.tablerows.push(row);               
                 });
+                console.log(popup_dict);
             }   
         });
     }
     else{
         app.neighborhoods = []; //clear array so that if no neighborhood pins present on screen, no data persists.
     }   
+}
+
+function addressTest(blockName){
+    let index = 0;
+    blockName = blockName + "";
+    //console.log(blockName);
+    let stringNumbers = "0123456789";
+    for (let index = 0, len = blockName.length; index < len; index++){
+        if(blockName.substring(index, index+1) == "X"){
+            if(index == 1 && !stringNumbers.includes(blockName.substring(index-1,index)) && blockName.substring(index+1, index+2) == "X"){
+                blockName = "0" + blockName.substring(index, blockName.length);
+            }
+            if(stringNumbers.includes(blockName.substring(index-1,index)) || stringNumbers.includes(blockName.substring(index+1,index+2)))
+            {
+                blockName = blockName.substring(0,index) + "0" + blockName.substring(index+1, blockName.length);
+            }
+        }
+    }
+    //console.log(blockName);
+    return blockName;
 }

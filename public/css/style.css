@@ -1,8 +1,19 @@
 #leafletmap {
-    width: 800px;  /* feel free to change this! */
-    height: 600px; /* feel free to change this! */
+    width: 52em;  /* feel free to change this! */
+    height: 40em; /* feel free to change this! */
 }
 
 td{
     text-align: center;
-} 
+}
+
+#pageheader{
+    background-color: black;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    color: azure;
+}
+#pagelink{
+    color: rgb(228, 228, 228);
+    font-size: 1.5em;
+}

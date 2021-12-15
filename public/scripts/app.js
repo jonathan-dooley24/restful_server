@@ -67,6 +67,21 @@ function init() {
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
 
+    //Event listener for every marker
+    for(var i = 0; i < markerArray.length; i++) {
+        var currentMarker = markerArray[i];
+        //if mouseover on marker, popup will appear
+        currentMarker.on("mouseover", function(e) {
+            var popup = L.popup()
+            .setLatLng(e.latlng)
+            .setContent("popup")
+            .openOn(map);
+        });
+
+        //Maybe have a mouseout to close, if time?
+    }
+    
+
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         //console.log(result);
         // St. Paul GeoJSON
@@ -159,17 +174,47 @@ function getDataTable() {
             }
             else{
                 app.tablerows = [];
+                let popup_dict = {};
                 result.forEach(row => {
                     //console.log("row: " + row);
                     let name = neighborhood_markers[row.neighborhood_number-1].name;
                     //console.log("name: " + name);
                     row.neighborhood_number = name; //unorthodox but I like it
+                    popup_dict[name] = (popup_dict[name] || 0) + 1;
+                    let blockName = "";
+                    if(row.block.indexOf("X") >= 0)
+                    {
+                        blockName = addressTest(row.block);
+                        row.block = blockName;
+                    }
+
                     app.tablerows.push(row);               
                 });
+                console.log(popup_dict);
             }   
         });
     }
     else{
         app.neighborhoods = []; //clear array so that if no neighborhood pins present on screen, no data persists.
     }   
+}
+
+function addressTest(blockName){
+    let index = 0;
+    blockName = blockName + "";
+    //console.log(blockName);
+    let stringNumbers = "0123456789";
+    for (let index = 0, len = blockName.length; index < len; index++){
+        if(blockName.substring(index, index+1) == "X"){
+            if(index == 1 && !stringNumbers.includes(blockName.substring(index-1,index)) && blockName.substring(index+1, index+2) == "X"){
+                blockName = "0" + blockName.substring(index, blockName.length);
+            }
+            if(stringNumbers.includes(blockName.substring(index-1,index)) || stringNumbers.includes(blockName.substring(index+1,index+2)))
+            {
+                blockName = blockName.substring(0,index) + "0" + blockName.substring(index+1, blockName.length);
+            }
+        }
+    }
+    //console.log(blockName);
+    return blockName;
 }

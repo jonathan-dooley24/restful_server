@@ -4,7 +4,7 @@ let dict = {};
 
 let neighborhood_markers = 
 [
-    {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood", count_crimes: 0},
+    {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood"},
     {location: [44.977413, -93.025156], marker: null, name: "Greater East Side"},
     {location: [44.931244, -93.079578], marker: null, name: "West Side"},
     {location: [44.956192, -93.060189], marker: null, name: "Dayton's Bluff"},
@@ -30,9 +30,8 @@ function init() {
     app = new Vue({
         el: '#app',
         data: {
-            location_address: "",
-            location_lat: "",
-            location_long: "",
+            location_search: "",
+            location_results: [],
             neighborhoods: [],
             classe:{
                 'Rape':'violent',
@@ -108,22 +107,7 @@ function init() {
     }
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
-    /*
-    //Event listener for every marker
-    for(var i = 0; i < markerArray.length; i++) {
-        var currentMarker = markerArray[i];
-        //if mouseover on marker, popup will appear
-        currentMarker.on("mouseover", function(e) {
-            var popup = L.popup()
-            .setLatLng(e.latlng)
-            .setContent("popup")
-            .openOn(map);
-        });
 
-        //Maybe have a mouseout to close, if time?
-    }
-    
-    */
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         //console.log(result);
         // St. Paul GeoJSON
@@ -150,9 +134,9 @@ function getJSON(url) {
     });
 }
 
-function locationAddressSearch(event){
+function locationSearch(event){
     //console.log("app location_Search : " + app.location_search);
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_address +
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_search +
               '&format=json&limit=25&accept-language=en'
 
     getJSON(url).then((result) => {
@@ -168,57 +152,11 @@ function locationAddressSearch(event){
     }).catch((error) => {
         console.log('Error:', error);
     });
-}
-
-function locationLatLongSearch(event){
-    //console.log("app location_Search : " + app.location_search);
-    let coords = app.location_lat + "," + app.location_long;
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + coords +
-              '&format=json&limit=25&accept-language=en'
-
-    getJSON(url).then((result) => {
-        if(result.length == 0){ //if no results
-            console.log("Error: no results for this search");
-        }
-        else{
-            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
-            setTimeout(() => {
-               setPlaceholder(); 
-            }, 600); 
-        }   
-    }).catch((error) => {
-        console.log('Error:', error);
-    });
-}
-
-function addressToLatLong(address){
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + address
-              '&format=json&limit=25&accept-language=en';
-    getJSON(url).then((result) => {
-        if(result.length == 0){ //if no results
-            console.log("Error: no results for this search");
-        }
-        else{
-            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
-            setTimeout(() => {
-                setPlaceholder(); 
-            }, 600); 
-        }   
-    }).catch((error) => {
-        console.log('Error:', error);
-    });
-    
 }
 
 function setPlaceholder(){
-    //let currentlatlong = document.getElementById("current");
-    //currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
-
-    document.getElementById("lat").placeholder = map.getCenter().lat.toFixed(6);
-    document.getElementById("long").placeholder = map.getCenter().lng.toFixed(6);
-    // currentlat = map.getCenter().lat.toFixed(6);
-    // currentlong = map.getCenter().lng.toFixed(6);
-
+    let currentlatlong = document.getElementById("current");
+    currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
     getDataTable();
 }
 
@@ -280,7 +218,6 @@ function getDataTable() {
                 });
                 dict = popup_dict;
                 console.log(dict);
-
             }   
         });
     }

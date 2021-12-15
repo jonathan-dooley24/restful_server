@@ -23,6 +23,8 @@ let neighborhood_markers =
     {location: [44.949203, -93.093739], marker: null, name: "Capitol River"}
 ];
 
+let countOfCrimes = [];
+
 function init() {
     let crime_url = 'http://localhost:8000';
     app = new Vue({
@@ -31,7 +33,23 @@ function init() {
             location_search: "",
             location_results: [],
             neighborhoods: [],
-
+            classe:{
+                'Rape':'violent',
+                'Agg. Assault Dom.':'violent',
+                'Simple Assault Dom.':'violent',
+                'Homicide':'violent',
+                'Agg. Assault':'violent',
+                'Auto Theft':'property',
+                'Graffiti':'property',
+                'Robbery':'property',
+                'Theft':'property',
+                'Vandalism':'property',
+                'Burglary':'property',
+                'Proactive Police Visit':'other',
+                'Discharge':'other',
+                'Narcotics':'other',
+                'Community Engagement Event':'other'
+              },
             map: {
                 center: {
                     lat: 44.955139,
@@ -44,7 +62,29 @@ function init() {
                     se: {lat: 44.883658, lng: -92.993787}
                 }
             },
-            tablerows: []
+            tablerows: [],
+            checkedNames: [],
+            selected_neigborhood: '',
+            hoodOptions: [
+                { text: 'All', value: '' },
+                { text: 'Conway/Battlecreek/Highwood', value: '1' },
+                { text: 'Greater East Side', value: '2' },
+                { text: 'West Side', value: '3' },
+                { text: "Dayton's Bluff", value: '4' },
+                { text: 'Payne/Phalen', value: '5' },
+                { text: 'North End', value: '6' },
+                { text: 'Thomas/Dale(Frogtown)', value: '7' },
+                { text: 'Summit/University', value: '8' },
+                { text: 'West Seventh', value: '9' },
+                { text: 'Como', value: '10' },
+                { text: 'Hamline/Midway', value: '11' },
+                { text: 'St. Anthony', value: '12' },
+                { text: 'Union Park', value: '13' },
+                { text: 'Macalester-Groveland', value: '14' },
+                { text: 'Highland', value: '15' },
+                { text: 'Summit Hill', value: '16' },
+                { text: 'Capitol River', value: '17' }
+              ]
         }
     });
 
@@ -60,11 +100,11 @@ function init() {
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
 
+
     //add markers for each neighborhood
     for(let i = 0; i < 17; i++){
         L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);      
     }
-
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
 
@@ -153,7 +193,7 @@ function getDataTable() {
         onScreen.forEach(number => {
             newUrl += number + ",";
         });
-        newUrl += "&limit=30"                   //!!  CHANGE THIS TO 1000(?) LATER
+        newUrl += "&limit=1000"                   //!!  CHANGE THIS TO 1000(?) LATER
         getJSON(newUrl).then((result) => {
             if(result.length == 0){
                 console.log("Error: no results for this search");

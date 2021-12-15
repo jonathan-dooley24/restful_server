@@ -28,9 +28,28 @@ function init() {
     app = new Vue({
         el: '#app',
         data: {
-            location_search: "",
-            location_results: [],
+            location_address: "",
+            location_lat: "",
+            location_long: "",
             neighborhoods: [],
+
+            classe:{
+                'Rape':'violent',
+                'Agg. Assault Dom.':'violent',
+                'Simple Assault Dom.':'violent',
+                'Homicide':'violent',
+                'Agg. Assault':'violent',
+                'Auto Theft':'property',
+                'Graffiti':'property',
+                'Robbery':'property',
+                'Theft':'property',
+                'Vandalism':'property',
+                'Burglary':'property',
+                'Proactive Police Visit':'other',
+                'Discharge':'other',
+                'Narcotics':'other',
+                'Community Engagement Event':'other'
+            },
 
             map: {
                 center: {
@@ -62,7 +81,8 @@ function init() {
 
     //add markers for each neighborhood
     for(let i = 0; i < 17; i++){
-        L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);      
+        neighborhood_markers[i].marker = L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);   
+
     }
 
     let district_boundary = new L.geoJson();
@@ -94,9 +114,10 @@ function getJSON(url) {
     });
 }
 
-function locationSearch(event){
+function locationLatLongSearch(event){
     //console.log("app location_Search : " + app.location_search);
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_search +
+    let coords = app.location_lat + "," + app.location_long;
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + coords +
               '&format=json&limit=25&accept-language=en'
 
     getJSON(url).then((result) => {
@@ -114,9 +135,30 @@ function locationSearch(event){
     });
 }
 
+function locationAddressSearch(event){
+        //console.log("app location_Search : " + app.location_search);
+        let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_address +
+                  '&format=json&limit=25&accept-language=en'
+    
+        getJSON(url).then((result) => {
+            if(result.length == 0){ //if no results
+                console.log("Error: no results for this search");
+            }
+            else{
+                map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
+                setTimeout(() => {
+                   setPlaceholder(); 
+                }, 600); 
+            }   
+        }).catch((error) => {
+            console.log('Error:', error);
+        });
+    }
+
+
 function setPlaceholder(){
-    let currentlatlong = document.getElementById("current");
-    currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);
+    document.getElementById("lat").placeholder = map.getCenter().lat.toFixed(6);
+    document.getElementById("long").placeholder = map.getCenter().lng.toFixed(6);
     getDataTable();
 }
 
@@ -153,31 +195,52 @@ function getDataTable() {
         onScreen.forEach(number => {
             newUrl += number + ",";
         });
-        newUrl += "&limit=30"                   //!!  CHANGE THIS TO 1000(?) LATER
+        newUrl += "&limit=1000"                   //!!  CHANGE THIS TO 1000(?) LATER
         getJSON(newUrl).then((result) => {
             if(result.length == 0){
                 console.log("Error: no results for this search");
             }
             else{
                 app.tablerows = [];
-                let popup_dict = {};
+                let popup_dict = {"Conway/Battlecreek/Highwood":0,
+                    "Greater East Side":0,
+                    "West Side":0,
+                    "Dayton's Bluff":0,
+                    "Payne/Phalen":0,
+                    "North End":0,
+                    "Thomas/Dale(Frogtown)":0,
+                    "Summit/University":0,
+                    "West Seventh":0,
+                    "Como":0,
+                    "Hamline/Midway":0,
+                    "St. Anthony":0,
+                    "Union Park":0,
+                    "Macalester-Groveland":0,
+                    "Highland":0,
+                    "Summit Hill":0,
+                    "Capitol River":0
+                };
                 result.forEach(row => {
                     //console.log("row: " + row);
                     let name = neighborhood_markers[row.neighborhood_number-1].name;
                     //console.log("name: " + name);
                     row.neighborhood_number = name; //unorthodox but I like it
-                    popup_dict[name] = (popup_dict[name] || 0) + 1;
+                    popup_dict[name] = popup_dict[name] + 1;
                     let blockName = "";
                     if(row.block.indexOf("X") >= 0)
                     {
                         blockName = addressTest(row.block);
                         row.block = blockName;
                     }
-
                     app.tablerows.push(row);               
                 });
                 dict = popup_dict;
-                console.log(dict);
+                console.log(popup_dict);
+                for(let i = 0; i < 17; i++){
+                    //console.log(popup_dict[neighborhood_markers[i].name]);
+                    neighborhood_markers[i].marker._popup.setContent("<b>" + neighborhood_markers[i].name + "</b><br> Number of Crimes: " + popup_dict[neighborhood_markers[i].name].toString());   
+                }
+                //console.log(dict);
             }   
         });
     }
@@ -208,6 +271,30 @@ function addressTest(blockName){
 
 function addMarker(row) {
     let popup_string = "Date: " + row.date + "\n" + "Time: " + row.time + "\n" + "Incident: " + row.incident;
-    console.log(popup_string);
-    //L.marker().bindPopup().addTo(map);
+    //console.log(popup_string);
+    //let result = addressToLatLong(row.block);
+    //let result_location = [result.lat, result.lon];
+    console.log(result);
+    //console.log(result.lon);
+    //L.marker(result_location).bindPopup( "yay").addTo(map);
+    
+    //L.marker._popup.setContent()); 
+    L.marker().bindPopup().addTo(map);
+}
+
+function addressToLatLong(address){
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + address +
+                  '&format=json&limit=25&accept-language=en';
+        getJSON(url).then((result) => {
+            if(result.length == 0){ //if no results
+                console.log("Error: no results for this search");
+            }
+            else{
+                console.log("result : " + result);
+                //console.log("result[0] : " + result[0]);
+                //return result; //return top result
+            }   
+        }).catch((error) => {
+            console.log('Error:', error);
+        });
 }

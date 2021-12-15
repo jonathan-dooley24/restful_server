@@ -2,11 +2,9 @@
     width: 52em;  /* feel free to change this! */
     height: 40em; /* feel free to change this! */
 }
-
 td{
     text-align: center;
 }
-
 #pageheader{
     background-color: black;
     padding-top: 2em;
@@ -18,7 +16,6 @@ td{
     font-size: 1.5em;
 
 } 
-
 .violent {
     background-color: red;
 }

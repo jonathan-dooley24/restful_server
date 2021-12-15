@@ -23,32 +23,30 @@
 </head>
 <body onload="init()">
     <!-- Main app -->
-    
+    <div id="pageheader">
+        <h1 style="text-align: center;">Crime Statistics</h1>
+        <h2 style="text-align: center;">St. Paul, MN</h1>
+        <div class="grid-x grid-padding-x" style="text-align: center; padding-top: 2em;">
+            <div class="cell large-3 large-offset-3"><a href="" id="pagelink">Home Page</a></div>
+            <div class="cell large-3"><a href="" id="pagelink">About the Project</a></div>
+        </div> 
+        
+    </div>
+
+
     <div id="app">
-        <div class="grid-x grid-padding-x">
-            <div class="cell large-3">Menu</div>
-            <h1 id="current" class="cell large-9">Lat: 44.955139 Long: -93.102222</h1>
-        </div>
-        <div class="grid-x grid-padding-x" style="border: 5px;">
-            <div class="cell large-3">
+        <div class="grid-x grid-padding-x" style="padding: 2em;">
+            <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 2em;">
                     <label>Location Address: </label>
-                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
-                    <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
-            </div>
-            <div class="cell large-3" style="border: 5px;">        
+                    <input id="address" type="text" v-model="location_address" placeholder="Input Text for Location"/>
+                    <button class="button" id="lookup" type="button" @click="locationAddressSearch">Look Up</button>
                     <label>Latitude: </label>
-                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
+                    <input id="lat" type="text" v-model="location_lat" placeholder="44.955139"/>
                     <label>Location: </label>
-                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
-                    <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
+                    <input id="long" type="text" v-model="location_long" placeholder="-93.102222"/>
+                    <button class="button" id="lookup" type="button" @click="locationLatLongSearch">Look Up</button>
             </div>
-            <div class="cell large-8" id="leafletmap"></div> <!-- @click.stop="setPlaceholder"-->
-            <div class="cell auto">
-                Neighborhoods
-                <ul>
-                    <li v-for="Neighborhood in neighborhoods"> {{ Neighborhood }} </li>
-                </ul>
-            </div>
+            <div class="cell large-8" id="leafletmap"></div>
         </div>
         <div class="grid-x grid-padding-x">
             <table>
@@ -62,14 +60,13 @@
                     <th>Button</th>
                 </tr>
                 <tr v-for="row in tablerows">
-                    <td>{{row.case_number}}</td>
-                    <td>{{row.date}}</td>
-                    <td>{{row.time}}</td>
-                    <td>{{row.incident}}</td>
-                    <!--grab the neighborhood name using the num here ?-->
-                    <td>{{row.neighborhood_number}}</td>
-                    <td>{{row.block}}</td>
-                    <td>
+                    <td :class="classe[row.incident]">{{row.case_number}}</td>
+                    <td :class="classe[row.incident]">{{row.date}}</td>
+                    <td :class="classe[row.incident]">{{row.time}}</td>
+                    <td :class="classe[row.incident]">{{row.incident}}</td>
+                    <td :class="classe[row.incident]">{{row.neighborhood_number}}</td>
+                    <td :class="classe[row.incident]">{{row.block}}</td>
+                    <td :class="classe[row.incident]">
                         <button class="button" type="button" @click="addMarker(row)">Add Marker</button>
                     </td>
                 </tr>

@@ -151,6 +151,25 @@ function locationLatLongSearch(event){
     });
 }
 
+function addressToLatLong(address){
+    let url = 'https://nominatim.openstreetmap.org/search?q=' + address
+              '&format=json&limit=25&accept-language=en';
+    getJSON(url).then((result) => {
+        if(result.length == 0){ //if no results
+            console.log("Error: no results for this search");
+        }
+        else{
+            map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
+            setTimeout(() => {
+                setPlaceholder(); 
+            }, 600); 
+        }   
+    }).catch((error) => {
+        console.log('Error:', error);
+    });
+    
+}
+
 function setPlaceholder(){
     //let currentlatlong = document.getElementById("current");
     //currentlatlong.textContent = "Lat: " + map.getCenter().lat.toFixed(6) + " Long: " + map.getCenter().lng.toFixed(6);

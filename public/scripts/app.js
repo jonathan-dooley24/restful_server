@@ -1,5 +1,6 @@
 let app;
 let map;
+let dict = {};
 
 let neighborhood_markers = 
 [
@@ -58,29 +59,14 @@ function init() {
     //event 'listeners' for map zooms and pans
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
-    
+
     //add markers for each neighborhood
     for(let i = 0; i < 17; i++){
-        L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);        
+        L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);      
     }
 
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
-
-    //Event listener for every marker
-    for(var i = 0; i < markerArray.length; i++) {
-        var currentMarker = markerArray[i];
-        //if mouseover on marker, popup will appear
-        currentMarker.on("mouseover", function(e) {
-            var popup = L.popup()
-            .setLatLng(e.latlng)
-            .setContent("popup")
-            .openOn(map);
-        });
-
-        //Maybe have a mouseout to close, if time?
-    }
-    
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
         //console.log(result);
@@ -190,7 +176,8 @@ function getDataTable() {
 
                     app.tablerows.push(row);               
                 });
-                console.log(popup_dict);
+                dict = popup_dict;
+                console.log(dict);
             }   
         });
     }
@@ -217,4 +204,10 @@ function addressTest(blockName){
     }
     //console.log(blockName);
     return blockName;
+}
+
+function addMarker(row) {
+    let popup_string = "Date: " + row.date + "\n" + "Time: " + row.time + "\n" + "Incident: " + row.incident;
+    console.log(popup_string);
+    //L.marker().bindPopup().addTo(map);
 }

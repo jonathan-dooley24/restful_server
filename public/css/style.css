@@ -6,3 +6,15 @@
 td{
     text-align: center;
 } 
+
+.violent {
+    background-color: red;
+}
+
+.property {
+    background-color: #cd7f32;
+}
+
+.other {
+    background-color: #00C853;
+}

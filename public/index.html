@@ -60,14 +60,14 @@
                     <th>Neighborhood</th>
                     <th>Block</th>
                 </tr>
-                <tr v-for="row in tablerows">
-                    <td>{{row.case_number}}</td>
-                    <td>{{row.date}}</td>
-                    <td>{{row.time}}</td>
-                    <td>{{row.incident}}</td>
+                <tr v-for="(row, index) in tablerows" :key="row.incident">
+                    <td :class="classe[row.incident]">{{row.case_number}}</td>
+                    <td :class="classe[row.incident]">{{row.date}}</td>
+                    <td :class="classe[row.incident]">{{row.time}}</td>
+                    <td :class="classe[row.incident]">{{row.incident}}</td>
                     <!--grab the neighborhood name using the num here ?-->
-                    <td>{{row.neighborhood_number}}</td>
-                    <td>{{row.block}}</td>
+                    <td :class="classe[row.incident]">{{row.neighborhood_number}}</td>
+                    <td :class="classe[row.incident]">{{row.block}}</td>
                 </tr>
             </table>
         </div>

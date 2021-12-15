@@ -59,6 +59,7 @@
                     <th>Incident</th>
                     <th>Neighborhood</th>
                     <th>Block</th>
+                    <th>Button</th>
                 </tr>
                 <tr v-for="row in tablerows">
                     <td>{{row.case_number}}</td>
@@ -68,6 +69,9 @@
                     <!--grab the neighborhood name using the num here ?-->
                     <td>{{row.neighborhood_number}}</td>
                     <td>{{row.block}}</td>
+                    <td>
+                        <button class="button" type="button" @click="addMarker(row)">Add Marker</button>
+                    </td>
                 </tr>
             </table>
         </div>

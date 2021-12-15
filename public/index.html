@@ -27,13 +27,20 @@
     <div id="app">
         <div class="grid-x grid-padding-x">
             <div class="cell large-3">Menu</div>
-            <h1 id = "current" class="cell large-9">Lat: 44.955139 Long: -93.102222</h1>
+            <h1 id="current" class="cell large-9">Lat: 44.955139 Long: -93.102222</h1>
         </div>
-        <div class="grid-x grid-padding-x">
+        <div class="grid-x grid-padding-x" style="border: 5px;">
             <div class="cell large-3">
-                <label>Location: </label>
-                <input id="location" type="text" v-model="location_search" style="width: 18rem;"/> <!--placeholder="input_placeholder"-->
-                <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
+                    <label>Location Address: </label>
+                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
+                    <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
+            </div>
+            <div class="cell large-3" style="border: 5px;">        
+                    <label>Latitude: </label>
+                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
+                    <label>Location: </label>
+                    <input id="location" type="text" v-model="location_search" style="width: 18rem;"/>
+                    <button class="button" id="lookup" type="button" @click="locationSearch">Look Up</button>
             </div>
             <div class="cell large-8" id="leafletmap"></div> <!-- @click.stop="setPlaceholder"-->
             <div class="cell auto">
@@ -58,8 +65,7 @@
                     <td>{{row.date}}</td>
                     <td>{{row.time}}</td>
                     <td>{{row.incident}}</td>
-                    <!--grab the neighborhood name using the num here-->
-
+                    <!--grab the neighborhood name using the num here ?-->
                     <td>{{row.neighborhood_number}}</td>
                     <td>{{row.block}}</td>
                 </tr>

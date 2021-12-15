@@ -3,48 +3,27 @@ let map;
 
 let neighborhood_markers = 
 [
-    {location: [44.942068, -93.020521], marker: null},
-    {location: [44.977413, -93.025156], marker: null},
-    {location: [44.931244, -93.079578], marker: null},
-    {location: [44.956192, -93.060189], marker: null},
-    {location: [44.978883, -93.068163], marker: null},
-    {location: [44.975766, -93.113887], marker: null},
-    {location: [44.959639, -93.121271], marker: null},
-    {location: [44.947700, -93.128505], marker: null},
-    {location: [44.930276, -93.119911], marker: null},
-    {location: [44.982752, -93.147910], marker: null},
-    {location: [44.963631, -93.167548], marker: null},
-    {location: [44.973971, -93.197965], marker: null},
-    {location: [44.949043, -93.178261], marker: null},
-    {location: [44.934848, -93.176736], marker: null},
-    {location: [44.913106, -93.170779], marker: null},
-    {location: [44.937705, -93.136997], marker: null},
-    {location: [44.949203, -93.093739], marker: null}
-];
-
-let neighborhood_names = [
-    {name: "Conway/Battlecreek/Highwood"},
-    {name: "Greater East Side"},
-    {name: "West Side"},
-    {name: "Dayton's Bluff"},
-    {name: "Payne/Phalen"},
-    {name: "North End"},
-    {name: "Thomas/Dale(Frogtown)"},
-    {name: "Summit/University"},
-    {name: "West Seventh"},
-    {name: "Como"},
-    {name: "Hamline/Midway"},
-    {name: "St. Anthony"},
-    {name: "Union Park"},
-    {name: "Macalester-Groveland"},
-    {name: "Highland"},
-    {name: "Summit Hill"},
-    {name: "Capitol River"}
+    {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood"},
+    {location: [44.977413, -93.025156], marker: null, name: "Greater East Side"},
+    {location: [44.931244, -93.079578], marker: null, name: "West Side"},
+    {location: [44.956192, -93.060189], marker: null, name: "Dayton's Bluff"},
+    {location: [44.978883, -93.068163], marker: null, name: "Payne/Phalen"},
+    {location: [44.975766, -93.113887], marker: null, name: "North End"},
+    {location: [44.959639, -93.121271], marker: null, name: "Thomas/Dale(Frogtown)"},
+    {location: [44.947700, -93.128505], marker: null, name: "Summit/University"},
+    {location: [44.930276, -93.119911], marker: null, name: "West Seventh"},
+    {location: [44.982752, -93.147910], marker: null, name: "Como"},
+    {location: [44.963631, -93.167548], marker: null, name: "Hamline/Midway"},
+    {location: [44.973971, -93.197965], marker: null, name: "St. Anthony"},
+    {location: [44.949043, -93.178261], marker: null, name: "Union Park"},
+    {location: [44.934848, -93.176736], marker: null, name: "Macalester-Groveland"},
+    {location: [44.913106, -93.170779], marker: null, name: "Highland"},
+    {location: [44.937705, -93.136997], marker: null, name: "Summit Hill"},
+    {location: [44.949203, -93.093739], marker: null, name: "Capitol River"}
 ];
 
 function init() {
     let crime_url = 'http://localhost:8000';
-
     app = new Vue({
         el: '#app',
         data: {
@@ -64,12 +43,9 @@ function init() {
                     se: {lat: 44.883658, lng: -92.993787}
                 }
             },
-            tablerows: [
-
-            ]
+            tablerows: []
         }
     });
-
 
     map = L.map('leafletmap').setView([app.map.center.lat, app.map.center.lng], app.map.zoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -83,29 +59,16 @@ function init() {
     map.on("moveend", setPlaceholder);
     map.on("zoomend", setPlaceholder);
     
-    L.marker([44.942068, -93.020521]).addTo(map);
-    L.marker([44.977413, -93.025156]).addTo(map);
-    L.marker([44.931244, -93.079578]).addTo(map);
-    L.marker([44.956192, -93.060189]).addTo(map);
-    L.marker([44.978883, -93.068163]).addTo(map);
-    L.marker([44.975766, -93.113887]).addTo(map);
-    L.marker([44.959639, -93.121271]).addTo(map);
-    L.marker([44.947700, -93.128505]).addTo(map);
-    L.marker([44.930276, -93.119911]).addTo(map);
-    L.marker([44.982752, -93.147910]).addTo(map);
-    L.marker([44.963631, -93.167548]).addTo(map);
-    L.marker([44.973971, -93.197965]).addTo(map);
-    L.marker([44.949043, -93.178261]).addTo(map);
-    L.marker([44.934848, -93.176736]).addTo(map);
-    L.marker([44.913106, -93.170779]).addTo(map);
-    L.marker([44.937705, -93.136997]).addTo(map);
-    L.marker([44.949203, -93.093739]).addTo(map);
+    //add markers for each neighborhood
+    for(let i = 0; i < 17; i++){
+        L.marker(neighborhood_markers[i].location).bindPopup(neighborhood_markers[i].name).addTo(map);        
+    }
 
     let district_boundary = new L.geoJson();
     district_boundary.addTo(map);
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
-        console.log(result);
+        //console.log(result);
         // St. Paul GeoJSON
         $(result.features).each(function(key, value) {
             district_boundary.addData(value);
@@ -131,11 +94,10 @@ function getJSON(url) {
 }
 
 function locationSearch(event){
-    console.log("app location_Search : " + app.location_search);
-
+    //console.log("app location_Search : " + app.location_search);
     let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_search +
               '&format=json&limit=25&accept-language=en'
-    //console.log(url);
+
     getJSON(url).then((result) => {
         if(result.length == 0){ //if no results
             console.log("Error: no results for this search");
@@ -144,8 +106,7 @@ function locationSearch(event){
             map.flyTo([result[0].lat, result[0].lon], 15, {duration:0.4});  //hard coded to zoom 15 instead of app.map.zoom    
             setTimeout(() => {
                setPlaceholder(); 
-            }, 600);
-            
+            }, 600); 
         }   
     }).catch((error) => {
         console.log('Error:', error);
@@ -191,7 +152,7 @@ function getDataTable() {
         onScreen.forEach(number => {
             newUrl += number + ",";
         });
-        newUrl += "&limit=30"
+        newUrl += "&limit=30"                   //!!  CHANGE THIS TO 1000(?) LATER
         getJSON(newUrl).then((result) => {
             if(result.length == 0){
                 console.log("Error: no results for this search");
@@ -199,9 +160,10 @@ function getDataTable() {
             else{
                 app.tablerows = [];
                 result.forEach(row => {
-                    console.log(row)
-                    let name = neighborhood_names[row.neighborhood_number-1]['name'];
-                    row.neighborhood_number = name;
+                    //console.log("row: " + row);
+                    let name = neighborhood_markers[row.neighborhood_number-1].name;
+                    //console.log("name: " + name);
+                    row.neighborhood_number = name; //unorthodox but I like it
                     app.tablerows.push(row);               
                 });
             }   

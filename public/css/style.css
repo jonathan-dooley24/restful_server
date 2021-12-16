@@ -4,6 +4,12 @@
 }
 td{
     text-align: center;
+    border-style: solid;
+    border-width: 0.02em;
+}
+th{
+    border-style: solid;
+    border-width: 0.04em;
 }
 #pageheader{
     background-color: black;
@@ -16,14 +22,18 @@ td{
     font-size: 1.5em;
 
 } 
+#clearAllButton{
+    background-color: #cd5e32;
+    text-align: center;
+}
 .violent {
-    background-color: red;
+    background-color: rgb(243, 122, 122);
 }
 
 .property {
-    background-color: #cd7f32;
+    background-color: #ffec44;
 }
 
 .other {
-    background-color: #00C853;
+    background-color: #dddddd;
 }

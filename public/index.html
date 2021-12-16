@@ -32,8 +32,6 @@
         </div> 
         
     </div>
-
-
     <div id="app">
         <div class="grid-x grid-padding-x" style="padding: 2em;">
             <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 2em;">
@@ -47,9 +45,27 @@
                     <button class="button" id="lookup" type="button" @click="locationLatLongSearch">Look Up</button>
             </div>
             <div class="cell large-8" id="leafletmap"></div>
+            <div class="cell auto" style="padding-left: 5em;">
+                <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 8em; height: 14em;">
+                    <p style=""><b>Marker Legend</b></p>
+                    <ul>
+                        <li><span style="background-color: #3187CC; color: #3187CC;">- - - -</span> : Neighborhood Marker</li>
+                        <li><span style="background-color: #2DAD29; color: #2DAD29;">- - - -</span> : Incident Marker</li>
+                    </ul>
+                </div>
+                <button id="clearAllButton" class="button" type="button" @click="removeAllMarkers()">Remove All Incident Markers</button>
+                <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 8em; height: 14em;">
+                    <p style=""><b>Table Row Legend</b></p>
+                    <ul>
+                        <li><span class="other">Gray:</span> Non-Violent/Misc. Crime</li>
+                        <li><span class="property">Yellow:</span> Property Crime</li>
+                        <li><span class="violent">Red:</span> Violent Crime</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="grid-x grid-padding-x">
-            <table>
+        <div class="grid-x grid-padding-x" style="padding: 5em;">
+            <table style="border: 0.05em;">
                 <tr>
                     <th>Case Num</th>
                     <th>Date</th>
@@ -66,8 +82,8 @@
                     <td :class="classe[row.incident]">{{row.incident}}</td>
                     <td :class="classe[row.incident]">{{row.neighborhood_number}}</td>
                     <td :class="classe[row.incident]">{{row.block}}</td>
-                    <td :class="classe[row.incident]">
-                        <button class="button" type="button" @click="addMarker(row)">Add Marker</button>
+                    <td :class="classe[row.incident]" style="padding-top: 1em; padding-bottom: 0em;">
+                        <button class="button" type="button" @click="addMarker(row)" style="background-color: rgb(104, 104, 104);">Add Marker</button>
                     </td>
                 </tr>
             </table>

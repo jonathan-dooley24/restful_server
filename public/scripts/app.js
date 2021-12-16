@@ -1,7 +1,5 @@
 let app;
 let map;
-let dict = {};
-
 let neighborhood_markers = 
 [
     {location: [44.942068, -93.020521], marker: null, name: "Conway/Battlecreek/Highwood"},
@@ -22,6 +20,18 @@ let neighborhood_markers =
     {location: [44.937705, -93.136997], marker: null, name: "Summit Hill"},
     {location: [44.949203, -93.093739], marker: null, name: "Capitol River"}
 ];
+
+let temp_markers = [];
+
+var greenIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [20, 34],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
 
 function init() {
     let crime_url = 'http://localhost:8000';
@@ -89,8 +99,6 @@ function init() {
     district_boundary.addTo(map);
 
     getJSON('data/StPaulDistrictCouncil.geojson').then((result) => {
-        //console.log(result);
-        // St. Paul GeoJSON
         $(result.features).each(function(key, value) {
             district_boundary.addData(value);
         });
@@ -115,7 +123,6 @@ function getJSON(url) {
 }
 
 function locationLatLongSearch(event){
-    //console.log("app location_Search : " + app.location_search);
     let coords = app.location_lat + "," + app.location_long;
     let url = 'https://nominatim.openstreetmap.org/search?q=' + coords +
               '&format=json&limit=25&accept-language=en'
@@ -136,7 +143,6 @@ function locationLatLongSearch(event){
 }
 
 function locationAddressSearch(event){
-        //console.log("app location_Search : " + app.location_search);
         let url = 'https://nominatim.openstreetmap.org/search?q=' + app.location_address +
                   '&format=json&limit=25&accept-language=en'
     
@@ -195,7 +201,7 @@ function getDataTable() {
         onScreen.forEach(number => {
             newUrl += number + ",";
         });
-        newUrl += "&limit=1000"                   //!!  CHANGE THIS TO 1000(?) LATER
+        newUrl += "&limit=1000"
         getJSON(newUrl).then((result) => {
             if(result.length == 0){
                 console.log("Error: no results for this search");
@@ -221,10 +227,8 @@ function getDataTable() {
                     "Capitol River":0
                 };
                 result.forEach(row => {
-                    //console.log("row: " + row);
                     let name = neighborhood_markers[row.neighborhood_number-1].name;
-                    //console.log("name: " + name);
-                    row.neighborhood_number = name; //unorthodox but I like it
+                    row.neighborhood_number = name;
                     popup_dict[name] = popup_dict[name] + 1;
                     let blockName = "";
                     if(row.block.indexOf("X") >= 0)
@@ -234,13 +238,9 @@ function getDataTable() {
                     }
                     app.tablerows.push(row);               
                 });
-                dict = popup_dict;
-                console.log(popup_dict);
                 for(let i = 0; i < 17; i++){
-                    //console.log(popup_dict[neighborhood_markers[i].name]);
                     neighborhood_markers[i].marker._popup.setContent("<b>" + neighborhood_markers[i].name + "</b><br> Number of Crimes: " + popup_dict[neighborhood_markers[i].name].toString());   
                 }
-                //console.log(dict);
             }   
         });
     }
@@ -252,7 +252,6 @@ function getDataTable() {
 function addressTest(blockName){
     let index = 0;
     blockName = blockName + "";
-    //console.log(blockName);
     let stringNumbers = "0123456789";
     for (let index = 0, len = blockName.length; index < len; index++){
         if(blockName.substring(index, index+1) == "X"){
@@ -265,36 +264,30 @@ function addressTest(blockName){
             }
         }
     }
-    //console.log(blockName);
     return blockName;
 }
 
 function addMarker(row) {
-    let popup_string = "Date: " + row.date + "\n" + "Time: " + row.time + "\n" + "Incident: " + row.incident;
-    //console.log(popup_string);
-    //let result = addressToLatLong(row.block);
-    //let result_location = [result.lat, result.lon];
-    console.log(result);
-    //console.log(result.lon);
-    //L.marker(result_location).bindPopup( "yay").addTo(map);
-    
-    //L.marker._popup.setContent()); 
-    L.marker().bindPopup().addTo(map);
-}
-
-function addressToLatLong(address){
-    let url = 'https://nominatim.openstreetmap.org/search?q=' + address +
+    let popup_string = "<b>Date: </b>" + row.date + "<br>" + "<b>Time: </b>" + row.time + "<br>" + "<b>Incident: </b>" + row.incident;
+        let url = 'https://nominatim.openstreetmap.org/search?q=' + row.block +
                   '&format=json&limit=25&accept-language=en';
         getJSON(url).then((result) => {
             if(result.length == 0){ //if no results
                 console.log("Error: no results for this search");
             }
             else{
-                console.log("result : " + result);
-                //console.log("result[0] : " + result[0]);
-                //return result; //return top result
+                let result_location = [result[0].lat, result[0].lon];
+                let current_marker = L.marker(result_location, {icon: greenIcon}).bindPopup(popup_string).addTo(map);
+                temp_markers.push(current_marker);
             }   
-        }).catch((error) => {
-            console.log('Error:', error);
+            }).catch((error) => {
+                console.log('Error:', error);
         });
 }
+
+function removeAllMarkers(){
+    for(let i = 0; i < temp_markers.length; i++){
+        map.removeLayer(temp_markers[i]);
+    }
+}
+  

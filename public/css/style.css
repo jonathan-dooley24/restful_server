@@ -1,4 +1,46 @@
 #leafletmap {
-    width: 800px;  /* feel free to change this! */
-    height: 600px; /* feel free to change this! */
+    width: 52em;  /* feel free to change this! */
+    height: 40em; /* feel free to change this! */
+}
+td{
+    text-align: center;
+    border-style: solid;
+    border-width: 0.02em;
+}
+th{
+    border-style: solid;
+    border-width: 0.04em;
+}
+#pageheader{
+    background-color: black;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    color: azure;
+}
+#pagelink{
+    color: rgb(228, 228, 228);
+    font-size: 1.5em;
+
+} 
+#clearAllButton{
+    background-color: #cd5e32;
+    text-align: center;
+}
+.violent {
+    background-color: rgb(243, 122, 122);
+}
+
+.property {
+    background-color: #ffec44;
+}
+
+.other {
+    background-color: #dddddd;
+}
+.profile-pic{
+    max-width: 20em;
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
 }

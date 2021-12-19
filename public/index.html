@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>St. Paul Crime Map</title>
+    <link rel="stylesheet" href="css/foundation.css">
+    <script src="js/foundation.js"></script>
 
     <!-- jQuery -->
     <script type="application/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -16,16 +18,76 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <!-- Application -->
-    <link rel="stylesheet" href="css/style.css"/>
+    <link rel="stylesheet" href="css/style.css"/> 
     <script type="application/javascript" src="scripts/app.js"></script>
 </head>
 <body onload="init()">
     <!-- Main app -->
-    <div id="app">
-        <div id="leafletmap"></div>
+    <div id="pageheader">
+        <h1 style="text-align: center;">Crime Statistics</h1>
+        <h2 style="text-align: center;">St. Paul, MN</h1>
+        <div class="grid-x grid-padding-x" style="text-align: center; padding-top: 2em;">
+            <div class="cell large-3 large-offset-3"><a href="index.html" id="pagelink">Home Page</a></div>
+            <div class="cell large-3"><a href="about.html" id="pagelink">About the Project</a></div>
+        </div> 
+        
     </div>
-    <label>Location: </label><input id="location" type="text" placeholder="enter location" style="width: 20rem;"/>
-    <button id="lookup" type="button">Look Up</button>
+    <div id="app">
+        <div class="grid-x grid-padding-x" style="padding: 2em;">
+            <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 2em;">
+                    <label>Location Address: </label>
+                    <input id="address" type="text" v-model="location_address" placeholder="Input Text for Location"/>
+                    <button class="button" id="lookup" type="button" @click="locationAddressSearch">Look Up</button>
+                    <label>Latitude: </label>
+                    <input id="lat" type="text" v-model="location_lat" placeholder="44.955139"/>
+                    <label>Location: </label>
+                    <input id="long" type="text" v-model="location_long" placeholder="-93.102222"/>
+                    <button class="button" id="lookup" type="button" @click="locationLatLongSearch">Look Up</button>
+            </div>
+            <div class="cell large-8" id="leafletmap"></div>
+            <div class="cell auto" style="padding-left: 5em;">
+                <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 8em; height: 14em;">
+                    <p style=""><b>Marker Legend</b></p>
+                    <ul>
+                        <li><span style="background-color: #3187CC; color: #3187CC;">- - - -</span> : Neighborhood Marker</li>
+                        <li><span style="background-color: #2DAD29; color: #2DAD29;">- - - -</span> : Incident Marker</li>
+                    </ul>
+                </div>
+                <button id="clearAllButton" class="button" type="button" @click="removeAllMarkers()">Remove All Incident Markers</button>
+                <div class="cell large-3 grid-y grid-padding-y" style="padding-right: 8em; height: 14em;">
+                    <p style=""><b>Table Row Legend</b></p>
+                    <ul>
+                        <li><span class="other">Gray:</span> Non-Violent/Misc. Crime</li>
+                        <li><span class="property">Yellow:</span> Property Crime</li>
+                        <li><span class="violent">Red:</span> Violent Crime</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="grid-x grid-padding-x" style="padding: 5em;">
+            <table style="border: 0.05em;">
+                <tr>
+                    <th>Case Num</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Incident</th>
+                    <th>Neighborhood</th>
+                    <th>Block</th>
+                    <th>Button</th>
+                </tr>
+                <tr v-for="row in tablerows">
+                    <td :class="classe[row.incident]">{{row.case_number}}</td>
+                    <td :class="classe[row.incident]">{{row.date}}</td>
+                    <td :class="classe[row.incident]">{{row.time}}</td>
+                    <td :class="classe[row.incident]">{{row.incident}}</td>
+                    <td :class="classe[row.incident]">{{row.neighborhood_number}}</td>
+                    <td :class="classe[row.incident]">{{row.block}}</td>
+                    <td :class="classe[row.incident]" style="padding-top: 1em; padding-bottom: 0em;">
+                        <button class="button" type="button" @click="addMarker(row)" style="background-color: rgb(104, 104, 104);">Add Marker</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
- 

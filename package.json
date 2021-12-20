@@ -1,5 +1,5 @@
 {
-    "name": "RESTful Server",
+    "name": "RESTfulServer",
     "version": "0.0.0",
     "description": "RESTful Webserver using Node.js",
     "author": {
